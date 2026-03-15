@@ -1,0 +1,10 @@
+model Notice {
+  id        String         @id @default(cuid())
+  title     String
+  content   String
+  audience  NoticeAudience @default(ALL)
+  createdBy String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  creator   User           @relation("NoticeCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+}

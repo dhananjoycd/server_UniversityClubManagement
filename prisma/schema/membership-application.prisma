@@ -1,0 +1,15 @@
+model MembershipApplication {
+  id          String            @id @default(cuid())
+  userId      String
+  department  String
+  session     String
+  studentId   String            @unique
+  district    String
+  phone       String
+  status      ApplicationStatus @default(PENDING)
+  submittedAt DateTime          @default(now())
+  reviewedAt  DateTime?
+  reviewedBy  String?
+  applicant   User              @relation("ApplicantApplications", fields: [userId], references: [id], onDelete: Cascade)
+  reviewer    User?             @relation("ReviewerApplications", fields: [reviewedBy], references: [id])
+}

@@ -1,0 +1,29 @@
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  EVENT_MANAGER
+  MEMBER
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum MemberStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum RegistrationStatus {
+  REGISTERED
+  WAITLISTED
+  CANCELLED
+}
+
+enum NoticeAudience {
+  ALL
+  MEMBERS
+  ADMINS
+}

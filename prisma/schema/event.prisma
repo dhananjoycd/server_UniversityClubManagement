@@ -1,0 +1,13 @@
+model Event {
+  id            String              @id @default(cuid())
+  title         String
+  description   String
+  location      String
+  eventDate     DateTime
+  capacity      Int
+  createdBy     String
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  creator       User                @relation("EventCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  registrations EventRegistration[]
+}

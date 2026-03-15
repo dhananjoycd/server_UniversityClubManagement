@@ -1,0 +1,11 @@
+model SiteSetting {
+  id               String   @id @default(cuid())
+  organizationName String
+  logoUrl          String?
+  contactEmail     String?
+  phone            String?
+  socialLinks      Json?
+  aboutText        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

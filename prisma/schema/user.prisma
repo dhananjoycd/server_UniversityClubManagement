@@ -1,0 +1,17 @@
+model User {
+  id                     String                  @id @default(cuid())
+  name                   String?
+  email                  String                  @unique
+  emailVerified          Boolean                 @default(false)
+  image                  String?
+  role                   Role                    @default(MEMBER)
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  accounts               Account[]
+  sessions               Session[]
+  membershipApplications MembershipApplication[] @relation("ApplicantApplications")
+  reviewedApplications   MembershipApplication[] @relation("ReviewerApplications")
+  memberProfile          MemberProfile?
+  createdEvents          Event[]                 @relation("EventCreator")
+  createdNotices         Notice[]                @relation("NoticeCreator")
+}

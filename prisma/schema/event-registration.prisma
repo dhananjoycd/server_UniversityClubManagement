@@ -1,0 +1,11 @@
+model EventRegistration {
+  id           String             @id @default(cuid())
+  eventId      String
+  memberId     String
+  status       RegistrationStatus @default(REGISTERED)
+  registeredAt DateTime           @default(now())
+  event        Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  member       MemberProfile      @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, memberId])
+}
