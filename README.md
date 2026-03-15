@@ -268,12 +268,7 @@ roleMiddleware
 Example:
 
 ```ts
-router.get(
-  "/admin/dashboard",
-  authMiddleware,
-  roleMiddleware("ADMIN"),
-  controller,
-);
+router.get("/admin/dashboard", authMiddleware, roleMiddleware("ADMIN"), controller);
 ```
 
 ---

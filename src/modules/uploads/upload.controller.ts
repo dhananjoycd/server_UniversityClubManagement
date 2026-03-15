@@ -21,4 +21,3 @@ const uploadImage: RequestHandler = catchAsync(async (req, res) => {
 export const uploadController = {
   uploadImage,
 };
-

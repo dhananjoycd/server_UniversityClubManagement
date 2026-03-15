@@ -17,4 +17,3 @@ export const mailTransporter = isMailConfigured
       },
     })
   : null;
-

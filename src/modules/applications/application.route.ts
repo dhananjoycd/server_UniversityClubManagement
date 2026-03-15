@@ -13,8 +13,16 @@ import {
 const applicationRouter = Router();
 
 applicationRouter.use(authMiddleware);
-applicationRouter.post("/", validateRequest(createApplicationSchema), applicationController.createApplication);
-applicationRouter.get("/", validateRequest(applicationListQuerySchema, "query"), applicationController.getApplications);
+applicationRouter.post(
+  "/",
+  validateRequest(createApplicationSchema),
+  applicationController.createApplication,
+);
+applicationRouter.get(
+  "/",
+  validateRequest(applicationListQuerySchema, "query"),
+  applicationController.getApplications,
+);
 applicationRouter.get("/:id", applicationController.getApplicationById);
 applicationRouter.patch(
   "/:id/review",

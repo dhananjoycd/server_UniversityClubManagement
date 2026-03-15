@@ -4,7 +4,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { eventService } from "./event.service";
 
-const getParamId = (id: string | string[] | undefined) => Array.isArray(id) ? id[0] : id ?? "";
+const getParamId = (id: string | string[] | undefined) => (Array.isArray(id) ? id[0] : (id ?? ""));
 
 const getEvents: RequestHandler = catchAsync(async (req, res) => {
   const result = await eventService.getEvents(req.query as Record<string, unknown>);
@@ -62,7 +62,10 @@ const deleteEvent: RequestHandler = catchAsync(async (req, res) => {
 });
 
 const registerForEvent: RequestHandler = catchAsync(async (req, res) => {
-  const registration = await eventService.registerForEvent(getParamId(req.params.id), res.locals.auth.user.id);
+  const registration = await eventService.registerForEvent(
+    getParamId(req.params.id),
+    res.locals.auth.user.id,
+  );
 
   sendResponse(res, {
     statusCode: 201,
@@ -80,4 +83,3 @@ export const eventController = {
   deleteEvent,
   registerForEvent,
 };
-

@@ -4,7 +4,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { applicationService } from "./application.service";
 
-const getParamId = (id: string | string[] | undefined) => Array.isArray(id) ? id[0] : id ?? "";
+const getParamId = (id: string | string[] | undefined) => (Array.isArray(id) ? id[0] : (id ?? ""));
 
 const createApplication: RequestHandler = catchAsync(async (req, res) => {
   const application = await applicationService.createApplication(res.locals.auth.user.id, req.body);
@@ -68,4 +68,3 @@ export const applicationController = {
   getApplicationById,
   reviewApplication,
 };
-

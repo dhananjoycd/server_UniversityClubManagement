@@ -4,7 +4,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { registrationService } from "./registration.service";
 
-const getParamId = (id: string | string[] | undefined) => Array.isArray(id) ? id[0] : id ?? "";
+const getParamId = (id: string | string[] | undefined) => (Array.isArray(id) ? id[0] : (id ?? ""));
 
 const getRegistrations: RequestHandler = catchAsync(async (req, res) => {
   const registrations = await registrationService.getRegistrations(
@@ -40,4 +40,3 @@ export const registrationController = {
   getRegistrations,
   cancelRegistration,
 };
-

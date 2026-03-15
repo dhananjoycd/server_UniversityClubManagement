@@ -4,10 +4,13 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { noticeService } from "./notice.service";
 
-const getParamId = (id: string | string[] | undefined) => Array.isArray(id) ? id[0] : id ?? "";
+const getParamId = (id: string | string[] | undefined) => (Array.isArray(id) ? id[0] : (id ?? ""));
 
 const getNotices: RequestHandler = catchAsync(async (req, res) => {
-  const notices = await noticeService.getNotices(res.locals.auth.user.role, req.query as Record<string, unknown>);
+  const notices = await noticeService.getNotices(
+    res.locals.auth.user.role,
+    req.query as Record<string, unknown>,
+  );
 
   sendResponse(res, {
     statusCode: 200,
@@ -18,7 +21,10 @@ const getNotices: RequestHandler = catchAsync(async (req, res) => {
 });
 
 const getNoticeById: RequestHandler = catchAsync(async (req, res) => {
-  const notice = await noticeService.getNoticeById(getParamId(req.params.id), res.locals.auth.user.role);
+  const notice = await noticeService.getNoticeById(
+    getParamId(req.params.id),
+    res.locals.auth.user.role,
+  );
 
   sendResponse(res, {
     statusCode: 200,
@@ -68,4 +74,3 @@ export const noticeController = {
   updateNotice,
   deleteNotice,
 };
-

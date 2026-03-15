@@ -9,7 +9,11 @@ const uploadImage = async (file: Express.Multer.File | undefined, folder = "serv
     throw new AppError(400, "File is required");
   }
 
-  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  if (
+    !process.env.CLOUDINARY_CLOUD_NAME ||
+    !process.env.CLOUDINARY_API_KEY ||
+    !process.env.CLOUDINARY_API_SECRET
+  ) {
     throw new AppError(500, "Cloudinary is not configured");
   }
 
@@ -36,4 +40,3 @@ const uploadImage = async (file: Express.Multer.File | undefined, folder = "serv
 export const uploadService = {
   uploadImage,
 };
-

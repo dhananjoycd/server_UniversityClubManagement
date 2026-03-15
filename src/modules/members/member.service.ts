@@ -6,7 +6,7 @@ import queryBuilder from "../../utils/queryBuilder";
 
 const getMembers = async (query: Record<string, unknown>) => {
   const { skip, take, page, limit, searchTerm } = queryBuilder(query);
-  const status = typeof query.status === "string" ? query.status as MemberStatus : undefined;
+  const status = typeof query.status === "string" ? (query.status as MemberStatus) : undefined;
 
   const where = {
     ...(status ? { status } : {}),
@@ -109,4 +109,3 @@ export const memberService = {
   getMemberById,
   updateMember,
 };
-

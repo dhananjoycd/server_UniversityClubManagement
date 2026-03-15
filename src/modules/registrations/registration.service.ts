@@ -75,4 +75,3 @@ export const registrationService = {
   getRegistrations,
   cancelRegistration,
 };
-

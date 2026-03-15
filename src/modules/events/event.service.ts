@@ -69,13 +69,16 @@ const getEventById = async (eventId: string) => {
   return event;
 };
 
-const createEvent = async (userId: string, payload: {
-  title: string;
-  description: string;
-  location: string;
-  eventDate: string;
-  capacity: number;
-}) => {
+const createEvent = async (
+  userId: string,
+  payload: {
+    title: string;
+    description: string;
+    location: string;
+    eventDate: string;
+    capacity: number;
+  },
+) => {
   return prisma.event.create({
     data: {
       title: payload.title,
@@ -88,13 +91,16 @@ const createEvent = async (userId: string, payload: {
   });
 };
 
-const updateEvent = async (eventId: string, payload: Partial<{
-  title: string;
-  description: string;
-  location: string;
-  eventDate: string;
-  capacity: number;
-}>) => {
+const updateEvent = async (
+  eventId: string,
+  payload: Partial<{
+    title: string;
+    description: string;
+    location: string;
+    eventDate: string;
+    capacity: number;
+  }>,
+) => {
   const existingEvent = await prisma.event.findUnique({ where: { id: eventId } });
 
   if (!existingEvent) {
@@ -158,9 +164,10 @@ const registerForEvent = async (eventId: string, userId: string) => {
     },
   });
 
-  const status = currentRegisteredCount >= event.capacity
-    ? RegistrationStatus.WAITLISTED
-    : RegistrationStatus.REGISTERED;
+  const status =
+    currentRegisteredCount >= event.capacity
+      ? RegistrationStatus.WAITLISTED
+      : RegistrationStatus.REGISTERED;
 
   return prisma.eventRegistration.create({
     data: {
@@ -189,4 +196,3 @@ export const eventService = {
   deleteEvent,
   registerForEvent,
 };
-

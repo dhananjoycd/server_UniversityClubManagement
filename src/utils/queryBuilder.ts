@@ -8,7 +8,9 @@ const queryBuilder = (query: Record<string, unknown>) => {
   return {
     page: Number.isNaN(page) || page < 1 ? 1 : page,
     limit: Number.isNaN(limit) || limit < 1 ? 10 : limit,
-    skip: ((Number.isNaN(page) || page < 1 ? 1 : page) - 1) * (Number.isNaN(limit) || limit < 1 ? 10 : limit),
+    skip:
+      ((Number.isNaN(page) || page < 1 ? 1 : page) - 1) *
+      (Number.isNaN(limit) || limit < 1 ? 10 : limit),
     take: Number.isNaN(limit) || limit < 1 ? 10 : limit,
     searchTerm,
     sortBy,

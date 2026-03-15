@@ -36,7 +36,9 @@ const upsertSettings = async (payload: {
   return prisma.siteSetting.update({
     where: { id: existingSettings.id },
     data: {
-      ...(payload.organizationName !== undefined ? { organizationName: payload.organizationName } : {}),
+      ...(payload.organizationName !== undefined
+        ? { organizationName: payload.organizationName }
+        : {}),
       ...(payload.logoUrl !== undefined ? { logoUrl: payload.logoUrl } : {}),
       ...(payload.contactEmail !== undefined ? { contactEmail: payload.contactEmail } : {}),
       ...(payload.phone !== undefined ? { phone: payload.phone } : {}),
@@ -50,4 +52,3 @@ export const settingService = {
   getSettings,
   upsertSettings,
 };
-

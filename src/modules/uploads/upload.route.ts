@@ -9,4 +9,3 @@ const uploadRouter = Router();
 uploadRouter.post("/image", authMiddleware, upload.single("file"), uploadController.uploadImage);
 
 export default uploadRouter;
-

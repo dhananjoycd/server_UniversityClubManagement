@@ -33,13 +33,16 @@ const sendApplicationEmail = async (
 
 const generateMembershipId = () => `MEM-${Date.now()}`;
 
-const createApplication = async (userId: string, payload: {
-  department: string;
-  session: string;
-  studentId: string;
-  district: string;
-  phone: string;
-}) => {
+const createApplication = async (
+  userId: string,
+  payload: {
+    department: string;
+    session: string;
+    studentId: string;
+    district: string;
+    phone: string;
+  },
+) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
@@ -89,29 +92,26 @@ const createApplication = async (userId: string, payload: {
   return application;
 };
 
-const getApplications = async (
-  userId: string,
-  userRole: Role,
-  query: Record<string, unknown>,
-) => {
+const getApplications = async (userId: string, userRole: Role, query: Record<string, unknown>) => {
   const { skip, take, page, limit, searchTerm } = queryBuilder(query);
-  const status = typeof query.status === "string" ? query.status as ApplicationStatus : undefined;
+  const status = typeof query.status === "string" ? (query.status as ApplicationStatus) : undefined;
 
-  const where = userRole === Role.MEMBER
-    ? { userId }
-    : {
-        ...(status ? { status } : {}),
-        ...(searchTerm
-          ? {
-              OR: [
-                { district: { contains: searchTerm, mode: "insensitive" as const } },
-                { studentId: { contains: searchTerm, mode: "insensitive" as const } },
-                { applicant: { name: { contains: searchTerm, mode: "insensitive" as const } } },
-                { applicant: { email: { contains: searchTerm, mode: "insensitive" as const } } },
-              ],
-            }
-          : {}),
-      };
+  const where =
+    userRole === Role.MEMBER
+      ? { userId }
+      : {
+          ...(status ? { status } : {}),
+          ...(searchTerm
+            ? {
+                OR: [
+                  { district: { contains: searchTerm, mode: "insensitive" as const } },
+                  { studentId: { contains: searchTerm, mode: "insensitive" as const } },
+                  { applicant: { name: { contains: searchTerm, mode: "insensitive" as const } } },
+                  { applicant: { email: { contains: searchTerm, mode: "insensitive" as const } } },
+                ],
+              }
+            : {}),
+        };
 
   const [applications, total] = await Promise.all([
     prisma.membershipApplication.findMany({
@@ -238,4 +238,3 @@ export const applicationService = {
   getApplicationById,
   reviewApplication,
 };
-

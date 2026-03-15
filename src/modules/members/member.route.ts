@@ -9,7 +9,12 @@ import { memberListQuerySchema, updateMemberSchema } from "./member.validation";
 const memberRouter = Router();
 
 memberRouter.use(authMiddleware);
-memberRouter.get("/", roleMiddleware(...ADMIN_ROLES), validateRequest(memberListQuerySchema, "query"), memberController.getMembers);
+memberRouter.get(
+  "/",
+  roleMiddleware(...ADMIN_ROLES),
+  validateRequest(memberListQuerySchema, "query"),
+  memberController.getMembers,
+);
 memberRouter.get("/:id", memberController.getMemberById);
 memberRouter.patch("/:id", validateRequest(updateMemberSchema), memberController.updateMember);
 

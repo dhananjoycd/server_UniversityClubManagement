@@ -4,7 +4,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { memberService } from "./member.service";
 
-const getParamId = (id: string | string[] | undefined) => Array.isArray(id) ? id[0] : id ?? "";
+const getParamId = (id: string | string[] | undefined) => (Array.isArray(id) ? id[0] : (id ?? ""));
 
 const getMembers: RequestHandler = catchAsync(async (req, res) => {
   const result = await memberService.getMembers(req.query as Record<string, unknown>);
@@ -53,4 +53,3 @@ export const memberController = {
   getMemberById,
   updateMember,
 };
-

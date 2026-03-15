@@ -2,7 +2,6 @@ import "dotenv/config";
 import { prisma } from "../src/lib/prisma";
 import { auth } from "../src/config/betterAuth";
 
-
 const seedAdmin = {
   name: process.env.SEED_ADMIN_NAME ?? "Super Admin",
   email: process.env.SEED_ADMIN_EMAIL ?? "admin@club.com",

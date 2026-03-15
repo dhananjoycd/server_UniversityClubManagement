@@ -14,7 +14,8 @@ const getVisibleAudiences = (role: Role) => {
 
 const getNotices = async (role: Role, query: Record<string, unknown>) => {
   const { skip, take, page, limit, searchTerm } = queryBuilder(query);
-  const audience = typeof query.audience === "string" ? query.audience as NoticeAudience : undefined;
+  const audience =
+    typeof query.audience === "string" ? (query.audience as NoticeAudience) : undefined;
 
   const allowedAudiences = getVisibleAudiences(role);
 
@@ -69,7 +70,10 @@ const getNoticeById = async (noticeId: string, role: Role) => {
   return notice;
 };
 
-const createNotice = async (userId: string, payload: { title: string; content: string; audience: NoticeAudience }) => {
+const createNotice = async (
+  userId: string,
+  payload: { title: string; content: string; audience: NoticeAudience },
+) => {
   return prisma.notice.create({
     data: {
       title: payload.title,
@@ -85,7 +89,10 @@ const createNotice = async (userId: string, payload: { title: string; content: s
   });
 };
 
-const updateNotice = async (noticeId: string, payload: Partial<{ title: string; content: string; audience: NoticeAudience }>) => {
+const updateNotice = async (
+  noticeId: string,
+  payload: Partial<{ title: string; content: string; audience: NoticeAudience }>,
+) => {
   const existingNotice = await prisma.notice.findUnique({ where: { id: noticeId } });
 
   if (!existingNotice) {
@@ -120,4 +127,3 @@ export const noticeService = {
   updateNotice,
   deleteNotice,
 };
-

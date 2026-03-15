@@ -7,4 +7,3 @@ const notFound: RequestHandler = (req, _res, next) => {
 };
 
 export default notFound;
-

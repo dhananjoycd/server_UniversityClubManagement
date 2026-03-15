@@ -21,4 +21,3 @@ router.use("/settings", settingRouter);
 router.use("/uploads", uploadRouter);
 
 export default router;
-

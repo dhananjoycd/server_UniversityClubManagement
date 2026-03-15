@@ -52,4 +52,3 @@ export const dashboardService = {
   getAdminDashboard,
   getMemberDashboard,
 };
-
