@@ -1,11 +1,22 @@
 model EventRegistration {
-  id           String             @id @default(cuid())
-  eventId      String
-  memberId     String
-  status       RegistrationStatus @default(REGISTERED)
-  registeredAt DateTime           @default(now())
-  event        Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  member       MemberProfile      @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  id                      String             @id @default(cuid())
+  eventId                 String
+  userId                  String
+  memberId                String?
+  status                  RegistrationStatus @default(REGISTERED)
+  paymentStatus           PaymentStatus      @default(NOT_REQUIRED)
+  snapshotName            String
+  snapshotEmail           String
+  snapshotPhone           String
+  snapshotSession         String
+  snapshotDepartment      String
+  paidAmount              Float?
+  paidCurrency            String?
+  stripeCheckoutSessionId String?            @unique
+  registeredAt            DateTime           @default(now())
+  event                   Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user                    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  member                  MemberProfile?     @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
-  @@unique([eventId, memberId])
+  @@unique([eventId, userId])
 }

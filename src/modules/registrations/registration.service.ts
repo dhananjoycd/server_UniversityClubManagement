@@ -4,16 +4,11 @@ import { prisma } from "../../lib/prisma";
 import AppError from "../../utils/AppError";
 import queryBuilder from "../../utils/queryBuilder";
 
-const isPrivilegedRole = (role: Role) => {
-  return role === Role.ADMIN || role === Role.SUPER_ADMIN || role === Role.EVENT_MANAGER;
-};
+const isPrivilegedRole = (role: Role) => role === Role.ADMIN || role === Role.SUPER_ADMIN || role === Role.EVENT_MANAGER;
 
 const getRegistrations = async (userId: string, userRole: Role, query: Record<string, unknown>) => {
   const { skip, take, page, limit } = queryBuilder(query);
-
-  const memberProfile = await prisma.memberProfile.findUnique({ where: { userId } });
-
-  const where = isPrivilegedRole(userRole) ? {} : { memberId: memberProfile?.id ?? "" };
+  const where = isPrivilegedRole(userRole) ? {} : { userId };
 
   const [registrations, total] = await Promise.all([
     prisma.eventRegistration.findMany({
@@ -23,13 +18,8 @@ const getRegistrations = async (userId: string, userRole: Role, query: Record<st
       orderBy: { registeredAt: "desc" },
       include: {
         event: true,
-        member: {
-          include: {
-            user: {
-              select: { id: true, name: true, email: true },
-            },
-          },
-        },
+        user: { select: { id: true, name: true, email: true } },
+        member: { include: { user: { select: { id: true, name: true, email: true } } } },
       },
     }),
     prisma.eventRegistration.count({ where }),
@@ -39,39 +29,21 @@ const getRegistrations = async (userId: string, userRole: Role, query: Record<st
 };
 
 const cancelRegistration = async (registrationId: string, userId: string, userRole: Role) => {
-  const registration = await prisma.eventRegistration.findUnique({
-    where: { id: registrationId },
-    include: { member: true },
-  });
+  const registration = await prisma.eventRegistration.findUnique({ where: { id: registrationId } });
+  if (!registration) throw new AppError(404, "Registration not found");
 
-  if (!registration) {
-    throw new AppError(404, "Registration not found");
-  }
-
-  const memberProfile = await prisma.memberProfile.findUnique({ where: { userId } });
-  const isOwner = memberProfile?.id === registration.memberId;
-
-  if (!isPrivilegedRole(userRole) && !isOwner) {
-    throw new AppError(403, "Forbidden");
-  }
+  const isOwner = registration.userId === userId;
+  if (!isPrivilegedRole(userRole) && !isOwner) throw new AppError(403, "Forbidden");
 
   return prisma.eventRegistration.update({
     where: { id: registrationId },
     data: { status: RegistrationStatus.CANCELLED },
     include: {
       event: true,
-      member: {
-        include: {
-          user: {
-            select: { id: true, name: true, email: true },
-          },
-        },
-      },
+      user: { select: { id: true, name: true, email: true } },
+      member: { include: { user: { select: { id: true, name: true, email: true } } } },
     },
   });
 };
 
-export const registrationService = {
-  getRegistrations,
-  cancelRegistration,
-};
+export const registrationService = { getRegistrations, cancelRegistration };

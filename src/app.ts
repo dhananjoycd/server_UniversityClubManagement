@@ -8,6 +8,7 @@ import { env } from "./config/env";
 import errorHandler from "./middlewares/errorHandler";
 import notFound from "./middlewares/notFound";
 import authRouter from "./modules/auth/auth.route";
+import paymentRouter from "./modules/payments/payment.route";
 import apiRouter from "./routes/index";
 import sendResponse from "./utils/sendResponse";
 
@@ -21,18 +22,11 @@ const apiLimiter = rateLimit({
 });
 
 app.use(helmet());
-
-app.use(
-  cors({
-    origin: env.CLIENT_URL,
-    credentials: true,
-  }),
-);
-
+app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
+app.use("/api/v1/payments", paymentRouter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 app.use(apiLimiter);
 
 app.get("/api/v1/health", (_req, res) => {
@@ -40,16 +34,12 @@ app.get("/api/v1/health", (_req, res) => {
     statusCode: 200,
     success: true,
     message: "Server is running",
-    data: {
-      environment: env.NODE_ENV,
-      uptime: process.uptime(),
-    },
+    data: { environment: env.NODE_ENV, uptime: process.uptime() },
   });
 });
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1", apiRouter);
-
 app.use(notFound);
 app.use(errorHandler);
 

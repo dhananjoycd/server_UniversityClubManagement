@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import accountRouter from "../modules/account/account.route";
 import applicationRouter from "../modules/applications/application.route";
 import dashboardRouter from "../modules/dashboard/dashboard.route";
 import eventRouter from "../modules/events/event.route";
@@ -11,6 +12,7 @@ import uploadRouter from "../modules/uploads/upload.route";
 
 const router = Router();
 
+router.use("/account", accountRouter);
 router.use("/applications", applicationRouter);
 router.use("/members", memberRouter);
 router.use("/events", eventRouter);

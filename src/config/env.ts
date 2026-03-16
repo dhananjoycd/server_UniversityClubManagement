@@ -20,14 +20,14 @@ const envSchema = z.object({
   SMTP_USER: optionalString,
   SMTP_PASS: optionalString,
   SMTP_FROM: optionalString,
+  STRIPE_SECRET_KEY: optionalString,
+  STRIPE_WEBHOOK_SECRET: optionalString,
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
 
 if (!parsedEnv.success) {
-  throw new Error(
-    `Invalid environment variables: ${parsedEnv.error.flatten().formErrors.join(", ")}`,
-  );
+  throw new Error(`Invalid environment variables: ${parsedEnv.error.flatten().formErrors.join(", ")}`);
 }
 
 export const env = parsedEnv.data;

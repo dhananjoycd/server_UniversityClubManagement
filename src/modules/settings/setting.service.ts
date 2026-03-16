@@ -29,7 +29,12 @@ type CommitteeMemberPayload = {
   name: string;
   role: string;
   department: string;
+  bio?: string;
   photoUrl?: string;
+  facebookUrl?: string;
+  linkedinUrl?: string;
+  whatsapp?: string;
+  email?: string;
 };
 
 const getSettings = async () => {
@@ -51,7 +56,12 @@ const upsertSettings = async (payload: {
   faqs?: FaqPayload[];
   testimonials?: TestimonialPayload[];
   committeeMembers?: CommitteeMemberPayload[];
+  committeeGroupPhotoUrl?: string;
+  aboutSectionPhotoUrl?: string;
   aboutText?: string;
+  aboutMission?: string;
+  aboutVision?: string;
+  aboutCollaboration?: string;
 }) => {
   const existingSettings = await prisma.siteSetting.findFirst({
     orderBy: { createdAt: "asc" },
@@ -70,7 +80,12 @@ const upsertSettings = async (payload: {
         faqs: payload.faqs as never,
         testimonials: payload.testimonials as never,
         committeeMembers: payload.committeeMembers as never,
+        committeeGroupPhotoUrl: payload.committeeGroupPhotoUrl,
+        aboutSectionPhotoUrl: payload.aboutSectionPhotoUrl,
         aboutText: payload.aboutText,
+        aboutMission: payload.aboutMission,
+        aboutVision: payload.aboutVision,
+        aboutCollaboration: payload.aboutCollaboration,
       },
     });
   }
@@ -88,7 +103,12 @@ const upsertSettings = async (payload: {
       ...(payload.faqs !== undefined ? { faqs: payload.faqs as never } : {}),
       ...(payload.testimonials !== undefined ? { testimonials: payload.testimonials as never } : {}),
       ...(payload.committeeMembers !== undefined ? { committeeMembers: payload.committeeMembers as never } : {}),
+      ...(payload.committeeGroupPhotoUrl !== undefined ? { committeeGroupPhotoUrl: payload.committeeGroupPhotoUrl } : {}),
+      ...(payload.aboutSectionPhotoUrl !== undefined ? { aboutSectionPhotoUrl: payload.aboutSectionPhotoUrl } : {}),
       ...(payload.aboutText !== undefined ? { aboutText: payload.aboutText } : {}),
+      ...(payload.aboutMission !== undefined ? { aboutMission: payload.aboutMission } : {}),
+      ...(payload.aboutVision !== undefined ? { aboutVision: payload.aboutVision } : {}),
+      ...(payload.aboutCollaboration !== undefined ? { aboutCollaboration: payload.aboutCollaboration } : {}),
     },
   });
 };

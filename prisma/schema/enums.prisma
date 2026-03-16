@@ -22,8 +22,21 @@ enum RegistrationStatus {
   CANCELLED
 }
 
+enum PaymentStatus {
+  NOT_REQUIRED
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
 enum NoticeAudience {
   ALL
   MEMBERS
   ADMINS
+}
+
+enum EventType {
+  FREE
+  PAID
 }

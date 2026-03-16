@@ -10,7 +10,12 @@ model SiteSetting {
   faqs             Json?
   testimonials     Json?
   committeeMembers Json?
+  committeeGroupPhotoUrl String?
+  aboutSectionPhotoUrl String?
   aboutText        String?
+  aboutMission     String?
+  aboutVision      String?
+  aboutCollaboration String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }

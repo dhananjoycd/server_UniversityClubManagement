@@ -8,47 +8,29 @@ const getAdminDashboard = async () => {
     prisma.notice.findMany({
       take: 5,
       orderBy: { createdAt: "desc" },
-      include: {
-        creator: {
-          select: { id: true, name: true, email: true },
-        },
-      },
+      include: { creator: { select: { id: true, name: true, email: true } } },
     }),
   ]);
 
-  return {
-    totalMembers,
-    pendingApplications,
-    totalEvents,
-    recentNotices,
-  };
+  return { totalMembers, pendingApplications, totalEvents, recentNotices };
 };
 
 const getMemberDashboard = async (userId: string) => {
-  const memberProfile = await prisma.memberProfile.findUnique({
-    where: { userId },
-    include: {
-      registrations: {
-        where: { status: { in: ["REGISTERED", "WAITLISTED"] } },
-        include: { event: true },
-      },
-    },
-  });
+  const [memberProfile, registeredEvents, upcomingEvents, user] = await Promise.all([
+    prisma.memberProfile.findUnique({ where: { userId } }),
+    prisma.eventRegistration.findMany({ where: { userId, status: { in: ["REGISTERED", "WAITLISTED"] } }, include: { event: true }, orderBy: { registeredAt: "desc" } }),
+    prisma.event.findMany({ where: { eventDate: { gte: new Date() } }, orderBy: { eventDate: "asc" }, take: 5 }),
+    prisma.user.findUnique({ where: { id: userId } }),
+  ]);
 
-  const upcomingEvents = await prisma.event.findMany({
-    where: { eventDate: { gte: new Date() } },
-    orderBy: { eventDate: "asc" },
-    take: 5,
-  });
+  const profileComplete = Boolean(user?.name?.trim() && user?.email?.trim() && user?.phone?.trim() && user?.academicSession?.trim() && user?.department?.trim());
 
   return {
     profileStatus: memberProfile?.status ?? null,
+    profileComplete,
     upcomingEvents,
-    registeredEvents: memberProfile?.registrations ?? [],
+    registeredEvents,
   };
 };
 
-export const dashboardService = {
-  getAdminDashboard,
-  getMemberDashboard,
-};
+export const dashboardService = { getAdminDashboard, getMemberDashboard };

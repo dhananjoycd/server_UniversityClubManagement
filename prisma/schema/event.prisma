@@ -1,13 +1,20 @@
 model Event {
-  id            String              @id @default(cuid())
-  title         String
-  description   String
-  location      String
-  eventDate     DateTime
-  capacity      Int
-  createdBy     String
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-  creator       User                @relation("EventCreator", fields: [createdBy], references: [id], onDelete: Cascade)
-  registrations EventRegistration[]
+  id                 String              @id @default(cuid())
+  title              String
+  description        String
+  location           String
+  eventDate          DateTime
+  capacity           Int
+  category           String?
+  eventType          EventType           @default(FREE)
+  price              Float?
+  currency           String?             @default("usd")
+  imageUrl           String?
+  isFeatured         Boolean             @default(false)
+  isRegistrationOpen Boolean             @default(true)
+  createdBy          String
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  creator            User                @relation("EventCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  registrations      EventRegistration[]
 }

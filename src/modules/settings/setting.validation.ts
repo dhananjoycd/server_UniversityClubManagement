@@ -29,7 +29,12 @@ const committeeMemberSchema = z.object({
   name: z.string().trim().min(1),
   role: z.string().trim().min(1),
   department: z.string().trim().min(1),
+  bio: z.string().trim().optional(),
   photoUrl: z.string().url().optional(),
+  facebookUrl: z.string().url().optional(),
+  linkedinUrl: z.string().url().optional(),
+  whatsapp: z.string().trim().optional(),
+  email: z.string().email().optional(),
 });
 
 export const upsertSettingSchema = z.object({
@@ -43,5 +48,10 @@ export const upsertSettingSchema = z.object({
   faqs: z.array(faqSchema).min(1).max(12).optional(),
   testimonials: z.array(testimonialSchema).max(3).optional(),
   committeeMembers: z.array(committeeMemberSchema).max(6).optional(),
+  committeeGroupPhotoUrl: z.string().url().optional(),
+  aboutSectionPhotoUrl: z.string().url().optional(),
   aboutText: z.string().trim().optional(),
+  aboutMission: z.string().trim().optional(),
+  aboutVision: z.string().trim().optional(),
+  aboutCollaboration: z.string().trim().optional(),
 });
