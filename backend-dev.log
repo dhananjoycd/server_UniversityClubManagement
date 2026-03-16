@@ -1,0 +1,7 @@
+
+> Club Management@1.0.0 dev
+> tsx watch src/server.ts
+
+3:41:39 AM [tsx] Return key Restarting...
+c[dotenv@17.3.1] injecting env (19) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+Server listening on port 5000

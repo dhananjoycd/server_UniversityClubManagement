@@ -1,0 +1,2 @@
+ALTER TABLE "SiteSetting"
+ADD COLUMN "faqs" JSONB;

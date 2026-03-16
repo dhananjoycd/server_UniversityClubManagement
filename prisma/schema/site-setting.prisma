@@ -5,6 +5,11 @@ model SiteSetting {
   contactEmail     String?
   phone            String?
   socialLinks      Json?
+  heroSlides       Json?
+  impactStats      Json?
+  faqs             Json?
+  testimonials     Json?
+  committeeMembers Json?
   aboutText        String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
