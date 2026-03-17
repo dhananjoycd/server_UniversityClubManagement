@@ -31,5 +31,6 @@ eventRouter.delete(
   eventController.deleteEvent,
 );
 eventRouter.post("/:id/register", authMiddleware, eventController.registerForEvent);
+eventRouter.post("/:id/payment-failed", authMiddleware, eventController.markPaymentVerificationFailed);
 
 export default eventRouter;

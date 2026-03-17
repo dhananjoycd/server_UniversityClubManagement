@@ -16,10 +16,11 @@ const getAdminDashboard = async () => {
 };
 
 const getMemberDashboard = async (userId: string) => {
-  const [memberProfile, registeredEvents, upcomingEvents, user] = await Promise.all([
+  const [memberProfile, registeredEvents, upcomingEvents, totalUpcomingEvents, user] = await Promise.all([
     prisma.memberProfile.findUnique({ where: { userId } }),
-    prisma.eventRegistration.findMany({ where: { userId, status: { in: ["REGISTERED", "WAITLISTED"] } }, include: { event: true }, orderBy: { registeredAt: "desc" } }),
+    prisma.eventRegistration.findMany({ where: ({ userId, status: { in: ["REGISTERED", "WAITLISTED"] }, paymentVerificationStatus: { in: ["NOT_APPLICABLE", "VERIFIED"] } } as any), include: { event: true }, orderBy: { registeredAt: "desc" } }),
     prisma.event.findMany({ where: { eventDate: { gte: new Date() } }, orderBy: { eventDate: "asc" }, take: 5 }),
+    prisma.event.count({ where: { eventDate: { gte: new Date() } } }),
     prisma.user.findUnique({ where: { id: userId } }),
   ]);
 
@@ -28,6 +29,7 @@ const getMemberDashboard = async (userId: string) => {
   return {
     profileStatus: memberProfile?.status ?? null,
     profileComplete,
+    totalUpcomingEvents,
     upcomingEvents,
     registeredEvents,
   };

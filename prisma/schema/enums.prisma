@@ -32,6 +32,13 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum PaymentVerificationStatus {
+  NOT_APPLICABLE
+  PENDING_VERIFICATION
+  VERIFIED
+  FAILED
+}
+
 enum NoticeAudience {
   ALL
   USERS

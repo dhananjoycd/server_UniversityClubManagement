@@ -16,6 +16,7 @@ const eventSchemaShape = {
   imageUrl: z.string().url().optional(),
   isFeatured: z.coerce.boolean().optional(),
   isRegistrationOpen: z.coerce.boolean().optional(),
+  sendEmail: z.coerce.boolean().optional(),
 };
 
 const eventObjectSchema = z.object(eventSchemaShape);

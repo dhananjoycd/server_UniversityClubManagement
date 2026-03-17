@@ -18,12 +18,22 @@ const getEventById: RequestHandler = catchAsync(async (req, res) => {
 
 const createEvent: RequestHandler = catchAsync(async (req, res) => {
   const event = await eventService.createEvent(res.locals.auth.user.id, req.body);
-  sendResponse(res, { statusCode: 201, success: true, message: "Event created successfully", data: event });
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: req.body.sendEmail ? "Event created and email delivery attempted" : "Event created successfully",
+    data: event,
+  });
 });
 
 const updateEvent: RequestHandler = catchAsync(async (req, res) => {
   const event = await eventService.updateEvent(getParamId(req.params.id), req.body);
-  sendResponse(res, { statusCode: 200, success: true, message: "Event updated successfully", data: event });
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: req.body.sendEmail ? "Event updated and email delivery attempted" : "Event updated successfully",
+    data: event,
+  });
 });
 
 const deleteEvent: RequestHandler = catchAsync(async (req, res) => {
@@ -41,4 +51,14 @@ const registerForEvent: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-export const eventController = { getEvents, getEventById, createEvent, updateEvent, deleteEvent, registerForEvent };
+const markPaymentVerificationFailed: RequestHandler = catchAsync(async (req, res) => {
+  const registration = await eventService.markPaymentVerificationFailed(getParamId(req.params.id), res.locals.auth.user.id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: registration ? "Payment verification marked as failed" : "No pending payment verification was found",
+    data: registration,
+  });
+});
+
+export const eventController = { getEvents, getEventById, createEvent, updateEvent, deleteEvent, registerForEvent, markPaymentVerificationFailed };

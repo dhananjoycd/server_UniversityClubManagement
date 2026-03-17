@@ -4,7 +4,8 @@ model EventRegistration {
   userId                  String
   memberId                String?
   status                  RegistrationStatus @default(REGISTERED)
-  paymentStatus           PaymentStatus      @default(NOT_REQUIRED)
+  paymentStatus           PaymentStatus            @default(NOT_REQUIRED)
+  paymentVerificationStatus PaymentVerificationStatus @default(NOT_APPLICABLE)
   snapshotName            String
   snapshotEmail           String
   snapshotPhone           String
@@ -12,8 +13,9 @@ model EventRegistration {
   snapshotDepartment      String
   paidAmount              Float?
   paidCurrency            String?
-  stripeCheckoutSessionId String?            @unique
-  registeredAt            DateTime           @default(now())
+  stripeCheckoutSessionId String?                  @unique
+  paymentVerifiedAt       DateTime?
+  registeredAt            DateTime                 @default(now())
   event                   Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
   user                    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   member                  MemberProfile?     @relation(fields: [memberId], references: [id], onDelete: Cascade)
