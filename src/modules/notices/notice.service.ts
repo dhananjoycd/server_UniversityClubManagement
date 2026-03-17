@@ -9,7 +9,11 @@ const getVisibleAudiences = (role: Role) => {
     return [NoticeAudience.ALL, NoticeAudience.MEMBERS, NoticeAudience.ADMINS];
   }
 
-  return [NoticeAudience.ALL, NoticeAudience.MEMBERS];
+  if (role === Role.MEMBER) {
+    return [NoticeAudience.ALL, NoticeAudience.MEMBERS];
+  }
+
+  return [NoticeAudience.ALL];
 };
 
 const getNotices = async (role: Role, query: Record<string, unknown>) => {

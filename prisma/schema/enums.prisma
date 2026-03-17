@@ -1,4 +1,5 @@
 enum Role {
+  USER
   SUPER_ADMIN
   ADMIN
   EVENT_MANAGER
@@ -12,6 +13,7 @@ enum ApplicationStatus {
 }
 
 enum MemberStatus {
+  INACTIVE
   ACTIVE
   SUSPENDED
 }

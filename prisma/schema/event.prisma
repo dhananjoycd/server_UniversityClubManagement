@@ -8,7 +8,7 @@ model Event {
   category           String?
   eventType          EventType           @default(FREE)
   price              Float?
-  currency           String?             @default("usd")
+  currency           String?             @default("bdt")
   imageUrl           String?
   isFeatured         Boolean             @default(false)
   isRegistrationOpen Boolean             @default(true)

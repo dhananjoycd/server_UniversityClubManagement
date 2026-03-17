@@ -4,6 +4,8 @@ import { prisma } from "../../lib/prisma";
 import AppError from "../../utils/AppError";
 import queryBuilder from "../../utils/queryBuilder";
 
+const isManagementRole = (role: Role) => role === Role.ADMIN || role === Role.SUPER_ADMIN || role === Role.EVENT_MANAGER;
+
 const getMembers = async (query: Record<string, unknown>) => {
   const { skip, take, page, limit, searchTerm } = queryBuilder(query);
   const status = typeof query.status === "string" ? (query.status as MemberStatus) : undefined;
@@ -56,7 +58,7 @@ const getMemberById = async (memberId: string, userId: string, userRole: Role) =
     throw new AppError(404, "Member profile not found");
   }
 
-  if (userRole === Role.MEMBER && member.userId !== userId) {
+  if (!isManagementRole(userRole) && member.userId !== userId) {
     throw new AppError(403, "Forbidden");
   }
 
@@ -77,7 +79,7 @@ const updateMember = async (
     throw new AppError(404, "Member profile not found");
   }
 
-  if (userRole === Role.MEMBER && existingMember.userId !== userId) {
+  if (!isManagementRole(userRole) && existingMember.userId !== userId) {
     throw new AppError(403, "Forbidden");
   }
 

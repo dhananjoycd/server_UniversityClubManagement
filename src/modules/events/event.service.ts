@@ -1,4 +1,11 @@
-import { EventType, MemberStatus, PaymentStatus, Prisma, RegistrationStatus, Role } from "@prisma/client";
+import {
+  EventType,
+  MemberStatus,
+  PaymentStatus,
+  Prisma,
+  RegistrationStatus,
+  Role,
+} from "@prisma/client";
 import Stripe from "stripe";
 
 import { env } from "../../config/env";
@@ -58,8 +65,13 @@ const createRegistrationRecord = async ({
   stripeCheckoutSessionId?: string;
   snapshot: ReturnType<typeof buildSnapshot>;
 }) => {
-  const currentRegisteredCount = await prisma.eventRegistration.count({ where: { eventId, status: RegistrationStatus.REGISTERED } });
-  const status = currentRegisteredCount >= capacity ? RegistrationStatus.WAITLISTED : RegistrationStatus.REGISTERED;
+  const currentRegisteredCount = await prisma.eventRegistration.count({
+    where: { eventId, status: RegistrationStatus.REGISTERED },
+  });
+  const status =
+    currentRegisteredCount >= capacity
+      ? RegistrationStatus.WAITLISTED
+      : RegistrationStatus.REGISTERED;
 
   return prisma.eventRegistration.create({
     data: {
@@ -138,20 +150,23 @@ const getEventById = async (eventId: string) => {
   return event;
 };
 
-const createEvent = async (userId: string, payload: {
-  title: string;
-  description: string;
-  location: string;
-  eventDate: string;
-  capacity: number;
-  category?: string;
-  eventType?: EventType;
-  price?: number;
-  currency?: string;
-  imageUrl?: string;
-  isFeatured?: boolean;
-  isRegistrationOpen?: boolean;
-}) => {
+const createEvent = async (
+  userId: string,
+  payload: {
+    title: string;
+    description: string;
+    location: string;
+    eventDate: string;
+    capacity: number;
+    category?: string;
+    eventType?: EventType;
+    price?: number;
+    currency?: string;
+    imageUrl?: string;
+    isFeatured?: boolean;
+    isRegistrationOpen?: boolean;
+  },
+) => {
   return prisma.$transaction(async (tx) => {
     if (payload.isFeatured) await tx.event.updateMany({ data: { isFeatured: false } });
 
@@ -165,7 +180,8 @@ const createEvent = async (userId: string, payload: {
         category: payload.category,
         eventType: payload.eventType ?? EventType.FREE,
         price: payload.eventType === EventType.PAID ? payload.price : null,
-        currency: payload.eventType === EventType.PAID ? (payload.currency?.toLowerCase() || "usd") : null,
+        currency:
+          payload.eventType === EventType.PAID ? payload.currency?.toLowerCase() || "bdt" : null,
         imageUrl: payload.imageUrl,
         isFeatured: payload.isFeatured ?? false,
         isRegistrationOpen: payload.isRegistrationOpen ?? true,
@@ -175,20 +191,23 @@ const createEvent = async (userId: string, payload: {
   });
 };
 
-const updateEvent = async (eventId: string, payload: Partial<{
-  title: string;
-  description: string;
-  location: string;
-  eventDate: string;
-  capacity: number;
-  category?: string;
-  eventType: EventType;
-  price?: number;
-  currency?: string;
-  imageUrl?: string;
-  isFeatured: boolean;
-  isRegistrationOpen: boolean;
-}>) => {
+const updateEvent = async (
+  eventId: string,
+  payload: Partial<{
+    title: string;
+    description: string;
+    location: string;
+    eventDate: string;
+    capacity: number;
+    category?: string;
+    eventType: EventType;
+    price?: number;
+    currency?: string;
+    imageUrl?: string;
+    isFeatured: boolean;
+    isRegistrationOpen: boolean;
+  }>,
+) => {
   const existingEvent = await prisma.event.findUnique({ where: { id: eventId } });
   if (!existingEvent) throw new AppError(404, "Event not found");
   const effectiveEventType = payload.eventType ?? existingEvent.eventType;
@@ -208,11 +227,27 @@ const updateEvent = async (eventId: string, payload: Partial<{
         ...(payload.capacity !== undefined ? { capacity: payload.capacity } : {}),
         ...(payload.category !== undefined ? { category: payload.category || null } : {}),
         ...(payload.eventType !== undefined ? { eventType: payload.eventType } : {}),
-        ...(payload.price !== undefined || payload.eventType !== undefined ? { price: effectiveEventType === EventType.PAID ? payload.price ?? existingEvent.price : null } : {}),
-        ...(payload.currency !== undefined || payload.eventType !== undefined ? { currency: effectiveEventType === EventType.PAID ? (payload.currency ?? existingEvent.currency ?? "usd").toLowerCase() : null } : {}),
+        ...(payload.price !== undefined || payload.eventType !== undefined
+          ? {
+              price:
+                effectiveEventType === EventType.PAID
+                  ? (payload.price ?? existingEvent.price)
+                  : null,
+            }
+          : {}),
+        ...(payload.currency !== undefined || payload.eventType !== undefined
+          ? {
+              currency:
+                effectiveEventType === EventType.PAID
+                  ? (payload.currency ?? existingEvent.currency ?? "bdt").toLowerCase()
+                  : null,
+            }
+          : {}),
         ...(payload.imageUrl !== undefined ? { imageUrl: payload.imageUrl || null } : {}),
         ...(payload.isFeatured !== undefined ? { isFeatured: payload.isFeatured } : {}),
-        ...(payload.isRegistrationOpen !== undefined ? { isRegistrationOpen: payload.isRegistrationOpen } : {}),
+        ...(payload.isRegistrationOpen !== undefined
+          ? { isRegistrationOpen: payload.isRegistrationOpen }
+          : {}),
       },
     });
   });
@@ -237,14 +272,24 @@ const registerForEvent = async (eventId: string, userId: string, userRole: Role)
 
   if (!event) throw new AppError(404, "Event not found");
   if (!user) throw new AppError(404, "User not found");
-  if (!event.isRegistrationOpen || event.eventDate < new Date()) throw new AppError(400, "Registration is closed for this event");
-  if (memberProfile && memberProfile.status !== MemberStatus.ACTIVE) throw new AppError(403, "Only active members can register through a member profile");
+  if (!event.isRegistrationOpen || event.eventDate < new Date())
+    throw new AppError(400, "Registration is closed for this event");
+  if (memberProfile && memberProfile.status !== MemberStatus.ACTIVE)
+    throw new AppError(403, "Only active members can register through a member profile");
 
   const missingFields = getProfileMissingFields(user);
-  if (missingFields.length > 0) throw new AppError(400, `Complete your profile before registering. Missing: ${missingFields.join(", ")}`);
+  if (missingFields.length > 0)
+    throw new AppError(
+      400,
+      `Complete your profile before registering. Missing: ${missingFields.join(", ")}`,
+    );
 
   const existingRegistration = await prisma.eventRegistration.findFirst({
-    where: { eventId, userId, status: { in: [RegistrationStatus.REGISTERED, RegistrationStatus.WAITLISTED] } },
+    where: {
+      eventId,
+      userId,
+      status: { in: [RegistrationStatus.REGISTERED, RegistrationStatus.WAITLISTED] },
+    },
   });
   if (existingRegistration) throw new AppError(409, "You are already registered for this event");
 
@@ -258,14 +303,16 @@ const registerForEvent = async (eventId: string, userId: string, userRole: Role)
       payment_method_types: ["card"],
       success_url: `${env.CLIENT_URL}/events/${event.id}?payment=success`,
       cancel_url: `${env.CLIENT_URL}/events/${event.id}?payment=cancelled`,
-      line_items: [{
-        price_data: {
-          currency: (event.currency || "usd").toLowerCase(),
-          product_data: { name: event.title, description: event.description },
-          unit_amount: Math.round(event.price * 100),
+      line_items: [
+        {
+          price_data: {
+            currency: (event.currency || "bdt").toLowerCase(),
+            product_data: { name: event.title, description: event.description },
+            unit_amount: Math.round(event.price * 100),
+          },
+          quantity: 1,
         },
-        quantity: 1,
-      }],
+      ],
       metadata: {
         eventId: event.id,
         userId,
@@ -298,7 +345,13 @@ const completePaidRegistration = async (session: Stripe.Checkout.Session) => {
   const userId = session.metadata?.userId;
   if (!eventId || !userId) return null;
 
-  const existingRegistration = await prisma.eventRegistration.findFirst({ where: { eventId, userId, status: { in: [RegistrationStatus.REGISTERED, RegistrationStatus.WAITLISTED] } } });
+  const existingRegistration = await prisma.eventRegistration.findFirst({
+    where: {
+      eventId,
+      userId,
+      status: { in: [RegistrationStatus.REGISTERED, RegistrationStatus.WAITLISTED] },
+    },
+  });
   if (existingRegistration) return existingRegistration;
 
   const event = await prisma.event.findUnique({ where: { id: eventId } });
@@ -323,4 +376,12 @@ const completePaidRegistration = async (session: Stripe.Checkout.Session) => {
   });
 };
 
-export const eventService = { getEvents, getEventById, createEvent, updateEvent, deleteEvent, registerForEvent, completePaidRegistration };
+export const eventService = {
+  getEvents,
+  getEventById,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  registerForEvent,
+  completePaidRegistration,
+};

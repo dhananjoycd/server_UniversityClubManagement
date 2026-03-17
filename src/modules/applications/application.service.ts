@@ -32,6 +32,7 @@ const sendApplicationEmail = async (
 };
 
 const generateMembershipId = () => `MEM-${Date.now()}`;
+const isManagementRole = (role: Role) => role === Role.ADMIN || role === Role.SUPER_ADMIN || role === Role.EVENT_MANAGER;
 
 const createApplication = async (
   userId: string,
@@ -45,46 +46,110 @@ const createApplication = async (
 ) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    include: { memberProfile: true },
   });
 
   if (!user) {
     throw new AppError(404, "User not found");
   }
 
-  const existingApplication = await prisma.membershipApplication.findFirst({
-    where: {
-      OR: [
-        { userId, status: ApplicationStatus.PENDING },
-        { userId, status: ApplicationStatus.APPROVED },
-        { studentId: payload.studentId },
-      ],
-    },
-  });
-
-  if (existingApplication) {
-    throw new AppError(409, "A membership application already exists for this user or student ID");
+  if (isManagementRole(user.role)) {
+    throw new AppError(403, "Administrative accounts cannot submit membership applications");
   }
 
-  const application = await prisma.membershipApplication.create({
-    data: {
-      userId,
-      ...payload,
-    },
-    include: {
-      applicant: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
+  if (user.memberProfile) {
+    throw new AppError(409, "Your account already has an active member profile");
+  }
+
+  const [existingUserApplication, existingStudentApplication] = await Promise.all([
+    prisma.membershipApplication.findFirst({
+      where: { userId },
+      orderBy: { submittedAt: "desc" },
+      include: {
+        applicant: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
         },
       },
-    },
-  });
+    }),
+    prisma.membershipApplication.findUnique({
+      where: { studentId: payload.studentId },
+      include: {
+        applicant: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  if (existingUserApplication && (existingUserApplication.status === ApplicationStatus.PENDING || existingUserApplication.status === ApplicationStatus.APPROVED)) {
+    throw new AppError(409, "A membership application already exists for this user");
+  }
+
+  if (existingStudentApplication && existingStudentApplication.userId !== userId) {
+    throw new AppError(409, "This student ID is already used in another membership application");
+  }
+
+  if (existingStudentApplication && (existingStudentApplication.status === ApplicationStatus.PENDING || existingStudentApplication.status === ApplicationStatus.APPROVED)) {
+    throw new AppError(409, "A membership application already exists for this student ID");
+  }
+
+  const resubmittableApplication = existingUserApplication?.status === ApplicationStatus.REJECTED
+    ? existingUserApplication
+    : existingStudentApplication?.status === ApplicationStatus.REJECTED && existingStudentApplication.userId === userId
+      ? existingStudentApplication
+      : null;
+
+  const application = resubmittableApplication
+    ? await prisma.membershipApplication.update({
+        where: { id: resubmittableApplication.id },
+        data: {
+          ...payload,
+          status: ApplicationStatus.PENDING,
+          submittedAt: new Date(),
+          reviewedAt: null,
+          reviewedBy: null,
+        },
+        include: {
+          applicant: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+            },
+          },
+        },
+      })
+    : await prisma.membershipApplication.create({
+        data: {
+          userId,
+          ...payload,
+        },
+        include: {
+          applicant: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+            },
+          },
+        },
+      });
 
   await sendApplicationEmail(
     user.email,
-    "Membership Application Received",
+    resubmittableApplication ? "Membership Application Resubmitted" : "Membership Application Received",
     "applicationReceived.ejs",
     { name: user.name },
   );
@@ -97,7 +162,7 @@ const getApplications = async (userId: string, userRole: Role, query: Record<str
   const status = typeof query.status === "string" ? (query.status as ApplicationStatus) : undefined;
 
   const where =
-    userRole === Role.MEMBER
+    !isManagementRole(userRole)
       ? { userId }
       : {
           ...(status ? { status } : {}),
@@ -154,7 +219,7 @@ const getApplicationById = async (applicationId: string, userId: string, userRol
     throw new AppError(404, "Application not found");
   }
 
-  if (userRole === Role.MEMBER && application.userId !== userId) {
+  if (!isManagementRole(userRole) && application.userId !== userId) {
     throw new AppError(403, "Forbidden");
   }
 
@@ -212,6 +277,11 @@ const reviewApplication = async (
       });
     }
 
+    await prisma.user.update({
+      where: { id: application.userId },
+      data: { role: Role.MEMBER },
+    });
+
     await sendApplicationEmail(
       application.applicant.email,
       "Membership Application Approved",
@@ -221,6 +291,11 @@ const reviewApplication = async (
   }
 
   if (payload.status === ApplicationStatus.REJECTED) {
+    await prisma.user.update({
+      where: { id: application.userId },
+      data: { role: Role.USER },
+    });
+
     await sendApplicationEmail(
       application.applicant.email,
       "Membership Application Rejected",

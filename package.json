@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prisma": "prisma",
     "start": "tsx src/server.ts",
     "build": "prisma generate && tsc",
     "dev": "tsx watch src/server.ts",
@@ -12,10 +13,15 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:reset": "prisma migrate reset",
     "generate": "prisma generate",
     "studio": "prisma studio",
     "push": "prisma db push",
     "pull": "prisma db pull",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:format": "prisma format",
+    "db:validate": "prisma validate",
     "seed": "tsx prisma/seed.ts",
     "stripe:webhook": "stripe listen --forward-to localhost:5000/webhook",
     "test": "echo \"Error: no test specified\" && exit 1"
