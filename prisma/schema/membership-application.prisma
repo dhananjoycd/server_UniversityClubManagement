@@ -10,6 +10,7 @@ model MembershipApplication {
   submittedAt DateTime          @default(now())
   reviewedAt  DateTime?
   reviewedBy  String?
+  reviewReason String?
   applicant   User              @relation("ApplicantApplications", fields: [userId], references: [id], onDelete: Cascade)
   reviewer    User?             @relation("ReviewerApplications", fields: [reviewedBy], references: [id])
 }

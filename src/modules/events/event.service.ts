@@ -42,6 +42,7 @@ const getProfileMissingFields = (user: {
   phone?: string | null;
   academicSession?: string | null;
   department?: string | null;
+  studentId?: string | null;
 }) => {
   const missing: string[] = [];
   if (!user.name?.trim()) missing.push("name");
@@ -49,6 +50,7 @@ const getProfileMissingFields = (user: {
   if (!user.phone?.trim()) missing.push("phone");
   if (!user.academicSession?.trim()) missing.push("session");
   if (!user.department?.trim()) missing.push("department");
+  if (!user.studentId?.trim()) missing.push("student ID");
   return missing;
 };
 

@@ -4,7 +4,7 @@ export const createApplicationSchema = z.object({
   department: z.string().trim().min(1),
   session: z.string().trim().min(1),
   studentId: z.string().trim().min(1),
-  district: z.string().trim().min(1),
+  district: z.string().trim().optional(),
   phone: z.string().trim().min(1),
 });
 

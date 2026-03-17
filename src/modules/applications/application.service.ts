@@ -33,6 +33,24 @@ const sendApplicationEmail = async (
 
 const generateMembershipId = () => `MEM-${Date.now()}`;
 const isManagementRole = (role: Role) => role === Role.ADMIN || role === Role.SUPER_ADMIN || role === Role.EVENT_MANAGER;
+const getMembershipProfileMissingFields = (user: {
+  name?: string | null;
+  email: string;
+  phone?: string | null;
+  academicSession?: string | null;
+  department?: string | null;
+  studentId?: string | null;
+  district?: string | null;
+}) => {
+  const missing: string[] = [];
+  if (!user.name?.trim()) missing.push("name");
+  if (!user.email?.trim()) missing.push("email");
+  if (!user.phone?.trim()) missing.push("phone");
+  if (!user.academicSession?.trim()) missing.push("session");
+  if (!user.department?.trim()) missing.push("department");
+  if (!user.studentId?.trim()) missing.push("student ID");
+  return missing;
+};
 
 const createApplication = async (
   userId: string,
@@ -40,7 +58,7 @@ const createApplication = async (
     department: string;
     session: string;
     studentId: string;
-    district: string;
+    district?: string;
     phone: string;
   },
 ) => {
@@ -61,6 +79,20 @@ const createApplication = async (
     throw new AppError(409, "Your account already has an active member profile");
   }
 
+  const missingProfileFields = getMembershipProfileMissingFields(user);
+
+  if (missingProfileFields.length > 0) {
+    throw new AppError(400, `Complete your profile before applying. Missing: ${missingProfileFields.join(", ")}`);
+  }
+
+  const applicationData = {
+    department: user.department!.trim(),
+    session: user.academicSession!.trim(),
+    studentId: user.studentId!.trim(),
+    district: user.district?.trim() ?? "",
+    phone: user.phone!.trim(),
+  };
+
   const [existingUserApplication, existingStudentApplication] = await Promise.all([
     prisma.membershipApplication.findFirst({
       where: { userId },
@@ -77,7 +109,7 @@ const createApplication = async (
       },
     }),
     prisma.membershipApplication.findUnique({
-      where: { studentId: payload.studentId },
+      where: { studentId: applicationData.studentId },
       include: {
         applicant: {
           select: {
@@ -112,13 +144,14 @@ const createApplication = async (
   const application = resubmittableApplication
     ? await prisma.membershipApplication.update({
         where: { id: resubmittableApplication.id },
-        data: {
-          ...payload,
+        data: ({
+          ...applicationData,
           status: ApplicationStatus.PENDING,
           submittedAt: new Date(),
           reviewedAt: null,
-          reviewedBy: null,
-        },
+          reviewReason: null,
+          reviewer: { disconnect: true },
+        } as any),
         include: {
           applicant: {
             select: {
@@ -133,7 +166,7 @@ const createApplication = async (
     : await prisma.membershipApplication.create({
         data: {
           userId,
-          ...payload,
+          ...applicationData,
         },
         include: {
           applicant: {
@@ -246,13 +279,20 @@ const reviewApplication = async (
     throw new AppError(409, "Only pending applications can be reviewed");
   }
 
+  const membershipMissingFields = getMembershipProfileMissingFields(application.applicant);
+
+  if (payload.status === ApplicationStatus.APPROVED && membershipMissingFields.length > 0) {
+    throw new AppError(400, `Applicant profile is incomplete. Missing: ${membershipMissingFields.join(", ")}`);
+  }
+
   const updatedApplication = await prisma.membershipApplication.update({
     where: { id: applicationId },
-    data: {
+    data: ({
       status: payload.status,
       reviewedAt: new Date(),
-      reviewedBy: reviewerId,
-    },
+      reviewReason: payload.status === ApplicationStatus.REJECTED ? payload.reason?.trim() || null : null,
+      reviewer: { connect: { id: reviewerId } },
+    } as any),
     include: {
       applicant: true,
       reviewer: {
@@ -270,22 +310,35 @@ const reviewApplication = async (
 
     if (!existingProfile) {
       await prisma.memberProfile.create({
-        data: {
+        data: ({
           userId: application.userId,
           membershipId,
+          studentId: application.studentId,
+          district: application.district,
           status: "ACTIVE",
-        },
+        } as any),
       });
     } else {
       await prisma.memberProfile.update({
         where: { userId: application.userId },
-        data: { status: "ACTIVE" },
+        data: ({
+          status: "ACTIVE",
+          studentId: application.studentId,
+          district: application.district,
+        } as any),
       });
     }
 
     await prisma.user.update({
       where: { id: application.userId },
-      data: { role: Role.MEMBER },
+      data: {
+        role: Role.MEMBER,
+        phone: application.applicant.phone ?? application.phone,
+        academicSession: application.applicant.academicSession ?? application.session,
+        department: application.applicant.department ?? application.department,
+        studentId: application.applicant.studentId ?? application.studentId,
+        district: application.applicant.district ?? application.district,
+      },
     });
 
     await sendApplicationEmail(
