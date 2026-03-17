@@ -8,7 +8,7 @@ const getParamId = (id: string | string[] | undefined) => (Array.isArray(id) ? i
 
 const getNotices: RequestHandler = catchAsync(async (req, res) => {
   const notices = await noticeService.getNotices(
-    res.locals.auth.user.role,
+    res.locals.auth.user,
     req.query as Record<string, unknown>,
   );
 
@@ -23,7 +23,7 @@ const getNotices: RequestHandler = catchAsync(async (req, res) => {
 const getNoticeById: RequestHandler = catchAsync(async (req, res) => {
   const notice = await noticeService.getNoticeById(
     getParamId(req.params.id),
-    res.locals.auth.user.role,
+    res.locals.auth.user,
   );
 
   sendResponse(res, {
@@ -40,7 +40,7 @@ const createNotice: RequestHandler = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: 201,
     success: true,
-    message: "Notice created successfully",
+    message: req.body.sendEmail ? "Notice created and email delivery attempted" : "Notice created successfully",
     data: notice,
   });
 });
@@ -51,7 +51,7 @@ const updateNotice: RequestHandler = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Notice updated successfully",
+    message: req.body.sendEmail ? "Notice updated and email delivery attempted" : "Notice updated successfully",
     data: notice,
   });
 });

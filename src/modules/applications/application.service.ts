@@ -273,7 +273,13 @@ const reviewApplication = async (
         data: {
           userId: application.userId,
           membershipId,
+          status: "ACTIVE",
         },
+      });
+    } else {
+      await prisma.memberProfile.update({
+        where: { userId: application.userId },
+        data: { status: "ACTIVE" },
       });
     }
 

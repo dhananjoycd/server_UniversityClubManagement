@@ -34,7 +34,10 @@ enum PaymentStatus {
 
 enum NoticeAudience {
   ALL
+  USERS
+  APPLICANTS
   MEMBERS
+  EVENT_MANAGERS
   ADMINS
 }
 
