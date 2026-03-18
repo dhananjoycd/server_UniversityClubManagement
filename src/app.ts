@@ -44,3 +44,4 @@ app.use(notFound);
 app.use(errorHandler);
 
 export default app;
+//v1.1 release - added google auth and payment gateway integration
