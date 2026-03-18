@@ -2,7 +2,7 @@
   "name": "Club Management",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
   "packageManager": "pnpm@10.29.1",
   "engines": {
     "node": ">=22 <23"
