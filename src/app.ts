@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(apiLimiter);
 
-app.get("/api/v1/health", (_req, res) => {
+app.get("/", (_req, res) => {
   sendResponse(res, {
     statusCode: 200,
     success: true,
