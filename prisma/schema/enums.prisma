@@ -52,3 +52,9 @@ enum EventType {
   FREE
   PAID
 }
+
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

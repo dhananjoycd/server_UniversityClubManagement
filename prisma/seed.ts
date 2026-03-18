@@ -270,6 +270,86 @@ const memberUsers: SeedUser[] = [
     },
   },
   {
+    name: "Imran Kabir",
+    email: "imran.user@club.com",
+    role: Role.MEMBER,
+    emailVerified: true,
+    phone: "01710000013",
+    academicSession: "2023-24",
+    department: "Computer Science and Engineering",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80",
+    memberProfile: {
+      membershipId: "MEM-2026-006",
+      joinDate: daysFromNow(-130, 10, 0),
+      bio: "Handles technical documentation and workshop support.",
+      profilePhoto: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80",
+      status: MemberStatus.ACTIVE,
+    },
+    application: {
+      department: "Computer Science and Engineering",
+      session: "2023-24",
+      studentId: "CSE2301006",
+      district: "Sylhet",
+      phone: "01710000013",
+      status: ApplicationStatus.APPROVED,
+      submittedAt: daysFromNow(-170, 10, 0),
+      reviewedAt: daysFromNow(-150, 12, 0),
+    },
+  },
+  {
+    name: "Priya Das",
+    email: "priya.user@club.com",
+    role: Role.MEMBER,
+    emailVerified: true,
+    phone: "01710000016",
+    academicSession: "2022-23",
+    department: "Information Technology",
+    memberProfile: {
+      membershipId: "MEM-2026-007",
+      joinDate: daysFromNow(-155, 9, 0),
+      bio: "Coordinates outreach, partnership communication, and member onboarding.",
+      profilePhoto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80",
+      status: MemberStatus.ACTIVE,
+    },
+    application: {
+      department: "Information Technology",
+      session: "2022-23",
+      studentId: "IT2201007",
+      district: "Jessore",
+      phone: "01710000016",
+      status: ApplicationStatus.APPROVED,
+      submittedAt: daysFromNow(-190, 10, 0),
+      reviewedAt: daysFromNow(-172, 14, 0),
+    },
+  },
+  {
+    name: "Sumaiya Anan",
+    email: "sumaiya.user@club.com",
+    role: Role.MEMBER,
+    emailVerified: true,
+    phone: "01710000018",
+    academicSession: "2025-26",
+    department: "Computer Science and Engineering",
+    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
+    memberProfile: {
+      membershipId: "MEM-2026-008",
+      joinDate: daysFromNow(-95, 11, 0),
+      bio: "Supports content, photography, and member communications.",
+      profilePhoto: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
+      status: MemberStatus.ACTIVE,
+    },
+    application: {
+      department: "Computer Science and Engineering",
+      session: "2025-26",
+      studentId: "CSE2501008",
+      district: "Bogura",
+      phone: "01710000018",
+      status: ApplicationStatus.APPROVED,
+      submittedAt: daysFromNow(-120, 9, 0),
+      reviewedAt: daysFromNow(-105, 11, 0),
+    },
+  },
+  {
     name: "Rafiul Karim",
     email: "rafiul.member@club.com",
     role: Role.MEMBER,
@@ -357,16 +437,6 @@ const applicantUsers: SeedUser[] = [
 
 const generalUsers: SeedUser[] = [
   {
-    name: "Imran Kabir",
-    email: "imran.user@club.com",
-    role: Role.USER,
-    emailVerified: true,
-    phone: "01710000013",
-    academicSession: "2023-24",
-    department: "Computer Science and Engineering",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80",
-  },
-  {
     name: "Tithi Roy",
     email: "tithi.user@club.com",
     role: Role.USER,
@@ -383,31 +453,12 @@ const generalUsers: SeedUser[] = [
     academicSession: "2024-25",
   },
   {
-    name: "Priya Das",
-    email: "priya.user@club.com",
-    role: Role.USER,
-    emailVerified: true,
-    phone: "01710000016",
-    academicSession: "2022-23",
-    department: "Information Technology",
-  },
-  {
     name: "Adib Rahman",
     email: "adib.user@club.com",
     role: Role.USER,
     emailVerified: true,
     phone: "01710000017",
     department: "Computer Science and Engineering",
-  },
-  {
-    name: "Sumaiya Anan",
-    email: "sumaiya.user@club.com",
-    role: Role.USER,
-    emailVerified: true,
-    phone: "01710000018",
-    academicSession: "2025-26",
-    department: "Computer Science and Engineering",
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
   },
 ];
 
@@ -693,6 +744,139 @@ const seedEvents: Array<{
   },
 ];
 
+const seedCommitteeSessions = [
+  {
+    label: "2017-18",
+    title: "Executive Committee 2017-18",
+    description: "Historical demo committee session for archive and admin listing view.",
+    isActive: false,
+    displayOrder: 10,
+    assignments: [],
+  },
+  {
+    label: "2018-19",
+    title: "Executive Committee 2018-19",
+    description: "Historical demo committee session for archive and admin listing view.",
+    isActive: false,
+    displayOrder: 9,
+    assignments: [],
+  },
+  {
+    label: "2019-20",
+    title: "Executive Committee 2019-20",
+    description: "Historical demo committee session for archive and admin listing view.",
+    isActive: false,
+    displayOrder: 8,
+    assignments: [],
+  },
+  {
+    label: "2020-21",
+    title: "Executive Committee 2020-21",
+    description: "Historical demo committee session for archive and admin listing view.",
+    isActive: false,
+    displayOrder: 7,
+    assignments: [],
+  },
+  {
+    label: "2021-22",
+    title: "Executive Committee 2021-22",
+    description: "Historical demo committee session for archive and admin listing view.",
+    isActive: false,
+    displayOrder: 6,
+    assignments: [],
+  },
+  {
+    label: "2022-23",
+    title: "Executive Committee 2022-23",
+    description: "Historical demo committee session for archive and admin listing view.",
+    isActive: false,
+    displayOrder: 5,
+    assignments: [],
+  },
+  {
+    label: "2023-24",
+    title: "Executive Committee 2023-24",
+    description: "Historical demo committee session for archive and admin listing view.",
+    isActive: false,
+    displayOrder: 4,
+    assignments: [],
+  },
+  {
+    label: "2024-25",
+    title: "Executive Committee 2024-25",
+    description: "Historical demo committee session for archive and admin listing view.",
+    isActive: false,
+    displayOrder: 3,
+    assignments: [],
+  },
+  {
+    label: "2025-26",
+    title: "Executive Committee 2025-26",
+    description: "Historical demo committee session for archive and admin listing view.",
+    isActive: false,
+    displayOrder: 2,
+    assignments: [],
+  },
+  {
+    label: "2026-27",
+    title: "Executive Committee 2026-27",
+    description:
+      "Demo executive committee for the 2026-27 session, prepared from seeded active members to represent a realistic club leadership structure.",
+    isActive: true,
+    displayOrder: 1,
+    assignments: [
+      {
+        memberEmail: "tanvir.member@club.com",
+        committeeWing: "Executive Committee",
+        positionTitle: "President",
+        sortOrder: 1,
+        facebookUrl: "https://facebook.com/tanvir.hasan.club",
+        linkedinUrl: "https://linkedin.com/in/tanvir-hasan-club",
+      },
+      {
+        memberEmail: "nusrat.member@club.com",
+        committeeWing: "Executive Committee",
+        positionTitle: "Vice President",
+        sortOrder: 2,
+        facebookUrl: "https://facebook.com/nusrat.jahan.club",
+        linkedinUrl: "https://linkedin.com/in/nusrat-jahan-club",
+      },
+      {
+        memberEmail: "rafiul.member@club.com",
+        committeeWing: "Executive Committee",
+        positionTitle: "General Secretary",
+        sortOrder: 3,
+        facebookUrl: "https://facebook.com/rafiul.karim.club",
+        linkedinUrl: "https://linkedin.com/in/rafiul-karim-club",
+      },
+      {
+        memberEmail: "imran.user@club.com",
+        committeeWing: "Operations Wing",
+        positionTitle: "Organizing Secretary",
+        sortOrder: 4,
+        facebookUrl: "https://facebook.com/imran.kabir.club",
+        linkedinUrl: "https://linkedin.com/in/imran-kabir-club",
+      },
+      {
+        memberEmail: "priya.user@club.com",
+        committeeWing: "Finance & Administration",
+        positionTitle: "Treasurer",
+        sortOrder: 5,
+        facebookUrl: "https://facebook.com/priya.das.club",
+        linkedinUrl: "https://linkedin.com/in/priya-das-club",
+      },
+      {
+        memberEmail: "sumaiya.user@club.com",
+        committeeWing: "Communication & Media",
+        positionTitle: "Joint Secretary",
+        sortOrder: 6,
+        facebookUrl: "https://facebook.com/sumaiya.anan.club",
+        linkedinUrl: "https://linkedin.com/in/sumaiya-anan-club",
+      },
+    ],
+  },
+] as const;
+
 const ensureAdminUser = async () => {
   const existingUser = await prisma.user.findUnique({
     where: { email: seedAdmin.email },
@@ -931,12 +1115,144 @@ const ensureEvents = async (adminUserId: string) => {
   };
 };
 
+const ensureCommitteeSession = async () => {
+  const activeLabel = seedCommitteeSessions.find((session) => session.isActive)?.label;
+
+  if (activeLabel) {
+    await prisma.committeeSession.updateMany({
+      where: { isActive: true, label: { not: activeLabel } },
+      data: { isActive: false },
+    });
+  }
+
+  let totalAssignments = 0;
+  let activeSessionLabel: string | null = null;
+  let activeSessionTitle: string | null = null;
+
+  for (const seedSession of seedCommitteeSessions) {
+    const existingSession = await prisma.committeeSession.findUnique({
+      where: { label: seedSession.label },
+      select: { id: true },
+    });
+
+    const session = existingSession
+      ? await prisma.committeeSession.update({
+          where: { id: existingSession.id },
+          data: {
+            title: seedSession.title,
+            description: seedSession.description,
+            isActive: seedSession.isActive,
+            displayOrder: seedSession.displayOrder,
+          },
+        })
+      : await prisma.committeeSession.create({
+          data: {
+            label: seedSession.label,
+            title: seedSession.title,
+            description: seedSession.description,
+            isActive: seedSession.isActive,
+            displayOrder: seedSession.displayOrder,
+          },
+        });
+
+    if (seedSession.isActive) {
+      activeSessionLabel = session.label;
+      activeSessionTitle = session.title;
+    }
+
+    if (!seedSession.assignments.length) {
+      await prisma.committeeAssignment.deleteMany({ where: { sessionId: session.id } });
+      continue;
+    }
+
+    const members = await prisma.memberProfile.findMany({
+      where: {
+        status: MemberStatus.ACTIVE,
+        user: {
+          email: {
+            in: seedSession.assignments.map((assignment) => assignment.memberEmail),
+          },
+        },
+      },
+      include: {
+        user: {
+          select: { email: true, phone: true },
+        },
+      },
+    });
+
+    const memberByEmail = new Map(members.map((member) => [member.user.email, member]));
+
+    for (const assignment of seedSession.assignments) {
+      if (!memberByEmail.has(assignment.memberEmail)) {
+        throw new Error(
+          `Active member profile not found for committee assignment: ${assignment.memberEmail}`,
+        );
+      }
+    }
+
+    const desiredMemberProfileIds = seedSession.assignments.map(
+      (assignment) => memberByEmail.get(assignment.memberEmail)!.id,
+    );
+
+    await prisma.committeeAssignment.deleteMany({
+      where: {
+        sessionId: session.id,
+        memberProfileId: { notIn: desiredMemberProfileIds },
+      },
+    });
+
+    for (const assignment of seedSession.assignments) {
+      const member = memberByEmail.get(assignment.memberEmail)!;
+
+      await prisma.committeeAssignment.upsert({
+        where: {
+          sessionId_memberProfileId: {
+            sessionId: session.id,
+            memberProfileId: member.id,
+          },
+        },
+        update: {
+          committeeWing: assignment.committeeWing,
+          positionTitle: assignment.positionTitle,
+          sortOrder: assignment.sortOrder,
+          isActive: true,
+          facebookUrl: assignment.facebookUrl,
+          linkedinUrl: assignment.linkedinUrl,
+          whatsapp: member.user.phone ?? undefined,
+        },
+        create: {
+          sessionId: session.id,
+          memberProfileId: member.id,
+          committeeWing: assignment.committeeWing,
+          positionTitle: assignment.positionTitle,
+          sortOrder: assignment.sortOrder,
+          isActive: true,
+          facebookUrl: assignment.facebookUrl,
+          linkedinUrl: assignment.linkedinUrl,
+          whatsapp: member.user.phone ?? undefined,
+        },
+      });
+    }
+
+    totalAssignments += seedSession.assignments.length;
+  }
+
+  return {
+    totalSessions: seedCommitteeSessions.length,
+    activeLabel: activeSessionLabel,
+    activeTitle: activeSessionTitle,
+    assignments: totalAssignments,
+  };
+};
+
 const main = async () => {
   const adminResult = await ensureAdminUser();
   const userResult = await ensureSeedUsers(adminResult.user.id);
   const settingResult = await ensureSiteSetting();
   const noticeResult = await ensureNotices(adminResult.user.id);
   const eventResult = await ensureEvents(adminResult.user.id);
+  const committeeResult = await ensureCommitteeSession();
 
   console.log("Seed completed.");
   console.log(
@@ -965,6 +1281,12 @@ const main = async () => {
         events: {
           created: eventResult.created,
           totalPrepared: eventResult.total,
+        },
+        committee: {
+          totalSessionsPrepared: committeeResult.totalSessions,
+          activeLabel: committeeResult.activeLabel,
+          activeTitle: committeeResult.activeTitle,
+          assignmentsPrepared: committeeResult.assignments,
         },
       },
       null,

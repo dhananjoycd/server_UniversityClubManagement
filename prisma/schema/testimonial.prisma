@@ -1,0 +1,19 @@
+model Testimonial {
+  id          String            @id @default(cuid())
+  userId      String
+  authorName  String
+  quote       String
+  meta        String
+  status      TestimonialStatus @default(PENDING)
+  reviewReason String?
+  isFeatured  Boolean           @default(false)
+  displayOrder Int              @default(0)
+  reviewedById String?
+  reviewedAt  DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  user        User              @relation("TestimonialAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  reviewer    User?             @relation("TestimonialReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([status, displayOrder, createdAt])
+}

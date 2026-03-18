@@ -20,4 +20,6 @@ model User {
   createdEvents          Event[]                 @relation("EventCreator")
   createdNotices         Notice[]                @relation("NoticeCreator")
   registrations          EventRegistration[]
+  testimonialSubmissions Testimonial[]           @relation("TestimonialAuthor")
+  reviewedTestimonials   Testimonial[]           @relation("TestimonialReviewer")
 }
