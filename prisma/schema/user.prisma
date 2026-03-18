@@ -22,4 +22,6 @@ model User {
   registrations          EventRegistration[]
   testimonialSubmissions Testimonial[]           @relation("TestimonialAuthor")
   reviewedTestimonials   Testimonial[]           @relation("TestimonialReviewer")
+  contactMessages        ContactMessage[]        @relation("ContactMessageAuthor")
+  reviewedContactMessages ContactMessage[]       @relation("ContactMessageReviewer")
 }

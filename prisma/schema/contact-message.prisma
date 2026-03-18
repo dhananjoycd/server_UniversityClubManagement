@@ -1,0 +1,21 @@
+model ContactMessage {
+  id            String                 @id @default(cuid())
+  userId        String
+  senderName    String
+  senderEmail   String
+  senderPhone   String?
+  subject       String
+  category      ContactMessageCategory @default(GENERAL)
+  message       String
+  status        ContactMessageStatus   @default(PENDING)
+  adminNote     String?
+  reviewedById  String?
+  reviewedAt    DateTime?
+  resolvedAt    DateTime?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  user          User                   @relation("ContactMessageAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  reviewer      User?                  @relation("ContactMessageReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([status, category, createdAt])
+}

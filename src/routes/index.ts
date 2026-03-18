@@ -3,6 +3,7 @@ import { Router } from "express";
 import accountRouter from "../modules/account/account.route";
 import applicationRouter from "../modules/applications/application.route";
 import committeeRouter from "../modules/committee/committee.route";
+import contactRouter from "../modules/contacts/contact.route";
 import dashboardRouter from "../modules/dashboard/dashboard.route";
 import eventRouter from "../modules/events/event.route";
 import memberRouter from "../modules/members/member.route";
@@ -27,5 +28,6 @@ router.use("/uploads", uploadRouter);
 router.use("/users", userRouter);
 router.use("/testimonials", testimonialRouter);
 router.use("/committee", committeeRouter);
+router.use("/contacts", contactRouter);
 
 export default router;

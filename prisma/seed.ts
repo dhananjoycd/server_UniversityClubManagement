@@ -1,5 +1,14 @@
 import "dotenv/config";
-import { ApplicationStatus, EventType, MemberStatus, NoticeAudience, Role } from "@prisma/client";
+import {
+  ApplicationStatus,
+  ContactMessageCategory,
+  ContactMessageStatus,
+  EventType,
+  MemberStatus,
+  NoticeAudience,
+  Role,
+  TestimonialStatus,
+} from "@prisma/client";
 import { prisma } from "../src/lib/prisma";
 import { auth } from "../src/config/betterAuth";
 
@@ -875,6 +884,139 @@ const seedCommitteeSessions = [
       },
     ],
   },
+];
+
+const seedTestimonials = [
+  {
+    userEmail: "tanvir.member@club.com",
+    quote:
+      "The club helped me move from classroom concepts to real project work. I learned how to collaborate, review code, and deliver on deadlines.",
+    meta: "Backend Team Volunteer",
+    status: TestimonialStatus.APPROVED,
+    isFeatured: true,
+    displayOrder: 1,
+    reviewedAt: daysFromNow(-40, 11, 0),
+  },
+  {
+    userEmail: "nusrat.member@club.com",
+    quote:
+      "I gained confidence in organizing events and communicating with different teams. The environment here is structured, supportive, and genuinely practical.",
+    meta: "Community and Design Volunteer",
+    status: TestimonialStatus.APPROVED,
+    isFeatured: false,
+    displayOrder: 2,
+    reviewedAt: daysFromNow(-32, 14, 0),
+  },
+  {
+    userEmail: "imran.user@club.com",
+    quote:
+      "Joining the club improved my technical writing, workshop preparation, and teamwork skills. It gave me a strong place to grow consistently.",
+    meta: "Technical Documentation Member",
+    status: TestimonialStatus.APPROVED,
+    isFeatured: false,
+    displayOrder: 3,
+    reviewedAt: daysFromNow(-27, 10, 0),
+  },
+  {
+    userEmail: "priya.user@club.com",
+    quote:
+      "The club created opportunities to work with seniors and manage real communication tasks. It has been valuable for both leadership and confidence.",
+    meta: "Outreach and Partnerships Member",
+    status: TestimonialStatus.PENDING,
+    isFeatured: false,
+    displayOrder: 0,
+  },
+  {
+    userEmail: "sumaiya.user@club.com",
+    quote:
+      "I liked the experience overall but the quote needs another pass before publication because I want to add more specific examples from recent events.",
+    meta: "Media and Content Member",
+    status: TestimonialStatus.REJECTED,
+    reviewReason: "Please shorten the testimonial and make it more specific to your experience.",
+    isFeatured: false,
+    displayOrder: 0,
+    reviewedAt: daysFromNow(-14, 16, 0),
+  },
+  {
+    userEmail: "rafiul.member@club.com",
+    quote:
+      "Working with the club improved my planning discipline, especially around promotion, volunteer management, and event execution under tight timelines.",
+    meta: "Operations and Media Member",
+    status: TestimonialStatus.APPROVED,
+    isFeatured: false,
+    displayOrder: 4,
+    reviewedAt: daysFromNow(-18, 13, 0),
+  },
+] as const;
+
+const seedContactMessages: Array<{
+  userEmail: string;
+  category: ContactMessageCategory;
+  subject: string;
+  message: string;
+  status: ContactMessageStatus;
+  adminNote?: string;
+  reviewedAt?: Date;
+  resolvedAt?: Date;
+}> = [
+  {
+    userEmail: "saba.applicant@club.com",
+    category: ContactMessageCategory.MEMBERSHIP,
+    subject: "Application review timeline",
+    message:
+      "I submitted my membership application recently and wanted to know the expected review timeline for the current batch.",
+    status: ContactMessageStatus.PENDING,
+  },
+  {
+    userEmail: "arif.applicant@club.com",
+    category: ContactMessageCategory.MEMBERSHIP,
+    subject: "Reapply after rejection",
+    message:
+      "My previous membership application was rejected. Please let me know whether I can revise my information and submit again this semester.",
+    status: ContactMessageStatus.IN_PROGRESS,
+    adminNote: "You can reapply with updated information in the next review cycle.",
+    reviewedAt: daysFromNow(-5, 12, 0),
+  },
+  {
+    userEmail: "mahin.user@club.com",
+    category: ContactMessageCategory.TECHNICAL,
+    subject: "Profile update issue",
+    message:
+      "I am trying to complete my profile but some information appears to remain incomplete after saving. Please check whether there is any validation issue.",
+    status: ContactMessageStatus.RESOLVED,
+    adminNote: "The issue was caused by missing department data. Please update and try again.",
+    reviewedAt: daysFromNow(-7, 11, 30),
+    resolvedAt: daysFromNow(-6, 10, 0),
+  },
+  {
+    userEmail: "tithi.user@club.com",
+    category: ContactMessageCategory.EVENTS,
+    subject: "Workshop registration question",
+    message:
+      "Before registering for the next workshop, I want to know whether seats are confirmed instantly or if there is a manual approval process.",
+    status: ContactMessageStatus.PENDING,
+  },
+  {
+    userEmail: "priya.user@club.com",
+    category: ContactMessageCategory.PARTNERSHIP,
+    subject: "Collaboration proposal for campus event",
+    message:
+      "Our team would like to discuss a possible collaboration for a student-focused event and would appreciate a short meeting with the club management.",
+    status: ContactMessageStatus.IN_PROGRESS,
+    adminNote: "We have shared this with the partnership team and will follow up by email.",
+    reviewedAt: daysFromNow(-3, 15, 0),
+  },
+  {
+    userEmail: "imran.user@club.com",
+    category: ContactMessageCategory.GENERAL,
+    subject: "Request for resource sharing",
+    message:
+      "Could the club make workshop slides or recorded materials available after events so members can review topics later at their own pace?",
+    status: ContactMessageStatus.RESOLVED,
+    adminNote: "Slides will be uploaded after internal review and event closure.",
+    reviewedAt: daysFromNow(-9, 14, 0),
+    resolvedAt: daysFromNow(-8, 9, 30),
+  },
 ] as const;
 
 const ensureAdminUser = async () => {
@@ -1246,6 +1388,110 @@ const ensureCommitteeSession = async () => {
   };
 };
 
+const ensureTestimonials = async (reviewerId: string) => {
+  let createdCount = 0;
+
+  for (const testimonial of seedTestimonials) {
+    const user = await prisma.user.findUnique({
+      where: { email: testimonial.userEmail },
+      select: { id: true, name: true },
+    });
+
+    if (!user) {
+      throw new Error(`User not found for testimonial seed: ${testimonial.userEmail}`);
+    }
+
+    const existing = await prisma.testimonial.findFirst({
+      where: {
+        userId: user.id,
+        quote: testimonial.quote,
+      },
+      select: { id: true },
+    });
+
+    const data = {
+      userId: user.id,
+      authorName: user.name ?? testimonial.userEmail,
+      quote: testimonial.quote,
+      meta: testimonial.meta,
+      status: testimonial.status,
+      reviewReason: testimonial.status === TestimonialStatus.REJECTED ? testimonial.reviewReason : null,
+      isFeatured: testimonial.status === TestimonialStatus.APPROVED ? testimonial.isFeatured : false,
+      displayOrder: testimonial.status === TestimonialStatus.APPROVED ? testimonial.displayOrder : 0,
+      reviewedById: testimonial.status === TestimonialStatus.PENDING ? null : reviewerId,
+      reviewedAt: testimonial.status === TestimonialStatus.PENDING ? null : testimonial.reviewedAt ?? new Date(),
+    };
+
+    if (existing) {
+      await prisma.testimonial.update({
+        where: { id: existing.id },
+        data,
+      });
+    } else {
+      await prisma.testimonial.create({ data });
+      createdCount += 1;
+    }
+  }
+
+  return {
+    created: createdCount,
+    total: seedTestimonials.length,
+  };
+};
+
+const ensureContactMessages = async (reviewerId: string) => {
+  let createdCount = 0;
+
+  for (const contact of seedContactMessages) {
+    const user = await prisma.user.findUnique({
+      where: { email: contact.userEmail },
+      select: { id: true, name: true, email: true, phone: true },
+    });
+
+    if (!user) {
+      throw new Error(`User not found for contact message seed: ${contact.userEmail}`);
+    }
+
+    const existing = await prisma.contactMessage.findFirst({
+      where: {
+        userId: user.id,
+        subject: contact.subject,
+      },
+      select: { id: true },
+    });
+
+    const data = {
+      userId: user.id,
+      senderName: user.name ?? user.email,
+      senderEmail: user.email,
+      senderPhone: user.phone ?? null,
+      subject: contact.subject,
+      category: contact.category,
+      message: contact.message,
+      status: contact.status,
+      adminNote: contact.adminNote ?? null,
+      reviewedById: contact.status === ContactMessageStatus.PENDING ? null : reviewerId,
+      reviewedAt: contact.status === ContactMessageStatus.PENDING ? null : contact.reviewedAt ?? new Date(),
+      resolvedAt: contact.status === ContactMessageStatus.RESOLVED ? contact.resolvedAt ?? new Date() : null,
+    };
+
+    if (existing) {
+      await prisma.contactMessage.update({
+        where: { id: existing.id },
+        data,
+      });
+    } else {
+      await prisma.contactMessage.create({ data });
+      createdCount += 1;
+    }
+  }
+
+  return {
+    created: createdCount,
+    total: seedContactMessages.length,
+  };
+};
+
 const main = async () => {
   const adminResult = await ensureAdminUser();
   const userResult = await ensureSeedUsers(adminResult.user.id);
@@ -1253,6 +1499,8 @@ const main = async () => {
   const noticeResult = await ensureNotices(adminResult.user.id);
   const eventResult = await ensureEvents(adminResult.user.id);
   const committeeResult = await ensureCommitteeSession();
+  const testimonialResult = await ensureTestimonials(adminResult.user.id);
+  const contactResult = await ensureContactMessages(adminResult.user.id);
 
   console.log("Seed completed.");
   console.log(
@@ -1287,6 +1535,14 @@ const main = async () => {
           activeLabel: committeeResult.activeLabel,
           activeTitle: committeeResult.activeTitle,
           assignmentsPrepared: committeeResult.assignments,
+        },
+        testimonials: {
+          created: testimonialResult.created,
+          totalPrepared: testimonialResult.total,
+        },
+        contactMessages: {
+          created: contactResult.created,
+          totalPrepared: contactResult.total,
         },
       },
       null,

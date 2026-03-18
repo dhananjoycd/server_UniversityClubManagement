@@ -58,3 +58,19 @@ enum TestimonialStatus {
   APPROVED
   REJECTED
 }
+
+
+enum ContactMessageStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum ContactMessageCategory {
+  GENERAL
+  MEMBERSHIP
+  EVENTS
+  PAYMENTS
+  PARTNERSHIP
+  TECHNICAL
+}
