@@ -45,3 +45,4 @@ app.use(errorHandler);
 
 export default app;
 //v1.1 release - added google auth and payment gateway integration
+// added some packages and scripts for better development experience and code quality
