@@ -21,8 +21,22 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const allowedOrigins = new Set(env.CLIENT_URLS);
+
 app.use(helmet());
-app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
+app.use(
+  cors({
+    origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
+      if (!origin || allowedOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`Origin not allowed by CORS: ${origin}`));
+    },
+    credentials: true,
+  }),
+);
 app.use("/api/v1/payments", paymentRouter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
