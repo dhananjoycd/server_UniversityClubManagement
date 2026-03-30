@@ -9,12 +9,21 @@ import { normalizeEmailAddress } from "../modules/auth/email-normalization";
 const verificationCallbackUrl = `${env.CLIENT_URL}/verify-email?status=success`;
 
 export const auth = betterAuth({
+  baseURL: env.BETTER_AUTH_URL,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
   basePath: "/api/v1/auth",
   secret: env.BETTER_AUTH_SECRET,
   trustedOrigins: env.CLIENT_URLS,
+  advanced: {
+    useSecureCookies: env.NODE_ENV === "production",
+    defaultCookieAttributes: {
+      sameSite: env.NODE_ENV === "production" ? "none" : "lax",
+      secure: env.NODE_ENV === "production",
+      httpOnly: true,
+    },
+  },
   databaseHooks: {
     user: {
       create: {
@@ -88,3 +97,4 @@ export const auth = betterAuth({
     },
   },
 });
+
