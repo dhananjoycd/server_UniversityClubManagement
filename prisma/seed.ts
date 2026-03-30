@@ -1155,28 +1155,207 @@ const ensureSeedUsers = async (reviewerId: string) => {
   };
 };
 
+const seedSiteSetting = {
+  organizationName: seedSite.organizationName,
+  logoUrl:
+    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=80",
+  contactEmail: seedSite.contactEmail,
+  phone: "+880 1710-000000",
+  socialLinks: {
+    facebook: "https://facebook.com/xyztechclub",
+    linkedin: "https://linkedin.com/company/xyztechclub",
+    github: "https://github.com/xyztechclub",
+  },
+  heroSlides: [
+    {
+      image:
+        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=80",
+      title: "Build, Learn, and Lead With XYZ Tech Club",
+      description:
+        "A student-driven tech community where members grow through practical workshops, team projects, coding contests, and leadership opportunities.",
+      tag: "Campus community",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80",
+      title: "From Classroom Learning to Real Project Experience",
+      description:
+        "We connect curious students with mentors, active committees, and hands-on events that sharpen technical and communication skills.",
+      tag: "Project culture",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1400&q=80",
+      title: "A Strong Network for Future Engineers and Builders",
+      description:
+        "Collaborate with seniors, contribute to events, and prepare for internships, research, and product-focused careers in a supportive environment.",
+      tag: "Career growth",
+    },
+  ],
+  impactStats: {
+    activeMembers: 128,
+    eventsDelivered: 46,
+    projectsShipped: 18,
+    mentorsAndSeniors: 22,
+  },
+  faqs: [
+    {
+      question: "Who can join XYZ Tech Club?",
+      answer:
+        "Any currently enrolled student with an interest in technology, collaboration, and active club participation can apply for membership through the club portal.",
+    },
+    {
+      question: "How does the membership application process work?",
+      answer:
+        "Students first complete their profile, submit a membership application, and then wait for the admin team to review academic and contact information before approval.",
+    },
+    {
+      question: "Do I need prior programming experience to participate?",
+      answer:
+        "No. We welcome beginners as well as experienced students. Many events are designed to help members build skills step by step through practice and mentorship.",
+    },
+    {
+      question: "What kinds of events does the club organize?",
+      answer:
+        "We regularly host workshops, seminars, webinars, coding contests, hackathons, project showcases, career sessions, and community meetups throughout the academic year.",
+    },
+    {
+      question: "Are paid events open to all members?",
+      answer:
+        "Yes. Paid events are announced publicly in the portal with seat limits, registration rules, and payment instructions. Free events remain available alongside them.",
+    },
+    {
+      question: "How can members become part of the committee?",
+      answer:
+        "Active members who consistently contribute to events, communication, logistics, or technical work are considered during future committee selection cycles.",
+    },
+  ],
+  testimonials: [
+    {
+      quote:
+        "XYZ Tech Club gave me my first real chance to work in a team, review code, and contribute to events that actually mattered on campus.",
+      author: "Tanvir Hasan",
+      meta: "Backend Team Volunteer",
+    },
+    {
+      quote:
+        "The workshops and committee work helped me grow both technically and personally. I became much more confident in collaboration and public communication.",
+      author: "Nusrat Jahan",
+      meta: "Community and Design Volunteer",
+    },
+    {
+      quote:
+        "What I value most is the environment. Seniors guide you, teammates support you, and every event becomes a learning experience with real responsibility.",
+      author: "Imran Kabir",
+      meta: "Technical Documentation Member",
+    },
+  ],
+  committeeMembers: [
+    {
+      name: "Tanvir Hasan",
+      role: "President",
+      department: "Computer Science and Engineering",
+      bio: "Leads the executive team with a focus on project-based learning, member growth, and sustainable club operations.",
+      photoUrl:
+        "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=600&q=80",
+      facebookUrl: "https://facebook.com/tanvir.hasan.club",
+      linkedinUrl: "https://linkedin.com/in/tanvir-hasan-club",
+      whatsapp: "01710000005",
+      email: "tanvir.member@club.com",
+    },
+    {
+      name: "Nusrat Jahan",
+      role: "Vice President",
+      department: "Information Technology",
+      bio: "Supports strategy, internal communication, and member engagement across design, outreach, and event coordination.",
+      photoUrl:
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80",
+      facebookUrl: "https://facebook.com/nusrat.jahan.club",
+      linkedinUrl: "https://linkedin.com/in/nusrat-jahan-club",
+      whatsapp: "01710000006",
+      email: "nusrat.member@club.com",
+    },
+    {
+      name: "Rafiul Karim",
+      role: "General Secretary",
+      department: "Information Technology",
+      bio: "Coordinates executive decisions, meeting flow, and club-wide execution for workshops, contests, and student programs.",
+      photoUrl:
+        "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?auto=format&fit=crop&w=600&q=80",
+      facebookUrl: "https://facebook.com/rafiul.karim.club",
+      linkedinUrl: "https://linkedin.com/in/rafiul-karim-club",
+      whatsapp: "01710000009",
+      email: "rafiul.member@club.com",
+    },
+    {
+      name: "Imran Kabir",
+      role: "Organizing Secretary",
+      department: "Computer Science and Engineering",
+      bio: "Handles workshop operations, volunteer planning, documentation, and smooth execution for technical events.",
+      photoUrl:
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80",
+      facebookUrl: "https://facebook.com/imran.kabir.club",
+      linkedinUrl: "https://linkedin.com/in/imran-kabir-club",
+      whatsapp: "01710000013",
+      email: "imran.user@club.com",
+    },
+    {
+      name: "Priya Das",
+      role: "Treasurer",
+      department: "Information Technology",
+      bio: "Oversees budgeting, sponsorship coordination, and responsible financial planning for club initiatives.",
+      photoUrl:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80",
+      facebookUrl: "https://facebook.com/priya.das.club",
+      linkedinUrl: "https://linkedin.com/in/priya-das-club",
+      whatsapp: "01710000016",
+      email: "priya.user@club.com",
+    },
+    {
+      name: "Sumaiya Anan",
+      role: "Joint Secretary",
+      department: "Computer Science and Engineering",
+      bio: "Leads content, event coverage, and member communication to keep the club visible, active, and welcoming.",
+      photoUrl:
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
+      facebookUrl: "https://facebook.com/sumaiya.anan.club",
+      linkedinUrl: "https://linkedin.com/in/sumaiya-anan-club",
+      whatsapp: "01710000018",
+      email: "sumaiya.user@club.com",
+    },
+  ],
+  committeeGroupPhotoUrl:
+    "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=80",
+  aboutSectionPhotoUrl:
+    "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1400&q=80",
+  aboutText:
+    "XYZ Tech Club is a student-led platform built to help learners move beyond theory and grow through real collaboration. We create spaces where students can practice technical skills, take responsibility, and contribute to meaningful campus programs.",
+  aboutMission:
+    "Our mission is to build a supportive and practical technology community where students learn by doing, contribute through teamwork, and become confident problem-solvers for the future.",
+  aboutVision:
+    "Our vision is to shape an inclusive campus ecosystem where curious students turn ideas into projects, projects into impact, and impact into long-term leadership and career readiness.",
+  aboutCollaboration:
+    "We believe strong communities are built through collaboration. That is why we connect students, seniors, alumni, and partners through events, mentorship, and shared execution across every major initiative.",
+} as const;
+
 const ensureSiteSetting = async () => {
   const existingSetting = await prisma.siteSetting.findFirst({
     orderBy: { createdAt: "asc" },
+    select: { id: true },
   });
 
-  if (existingSetting) {
-    return {
-      setting: existingSetting,
-      created: false,
-    };
-  }
-
-  const setting = await prisma.siteSetting.create({
-    data: {
-      organizationName: seedSite.organizationName,
-      contactEmail: seedSite.contactEmail,
-    },
-  });
+  const setting = existingSetting
+    ? await prisma.siteSetting.update({
+        where: { id: existingSetting.id },
+        data: seedSiteSetting,
+      })
+    : await prisma.siteSetting.create({
+        data: seedSiteSetting,
+      });
 
   return {
     setting,
-    created: true,
+    created: !existingSetting,
   };
 };
 
