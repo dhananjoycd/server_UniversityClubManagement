@@ -21,6 +21,21 @@ const getRegistrations: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const verifyPendingPayment: RequestHandler = catchAsync(async (req, res) => {
+  const registration = await registrationService.verifyPendingPayment(
+    getParamId(req.params.id),
+    res.locals.auth.user.id,
+    res.locals.auth.user.role,
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Payment verified successfully",
+    data: registration,
+  });
+});
+
 const cancelRegistration: RequestHandler = catchAsync(async (req, res) => {
   const registration = await registrationService.cancelRegistration(
     getParamId(req.params.id),
@@ -38,5 +53,6 @@ const cancelRegistration: RequestHandler = catchAsync(async (req, res) => {
 
 export const registrationController = {
   getRegistrations,
+  verifyPendingPayment,
   cancelRegistration,
 };

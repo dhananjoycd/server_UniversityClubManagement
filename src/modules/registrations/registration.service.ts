@@ -1,5 +1,6 @@
 import { EventType, PaymentStatus, PaymentVerificationStatus, Prisma, RegistrationStatus, Role } from "@prisma/client";
 
+import { stripeClient } from "../../config/stripe";
 import { prisma } from "../../lib/prisma";
 import AppError from "../../utils/AppError";
 import queryBuilder from "../../utils/queryBuilder";
@@ -83,6 +84,56 @@ const getRegistrations = async (userId: string, userRole: Role, query: Record<st
   };
 };
 
+const verifyPendingPayment = async (registrationId: string, _userId: string, userRole: Role) => {
+  if (!isPrivilegedRole(userRole)) throw new AppError(403, "Forbidden");
+
+  const registration = await prisma.eventRegistration.findUnique({
+    where: { id: registrationId },
+    include: {
+      event: true,
+      user: { select: { id: true, name: true, email: true } },
+      member: { include: { user: { select: { id: true, name: true, email: true } } } },
+    },
+  });
+
+  if (!registration) throw new AppError(404, "Registration not found");
+  if (registration.event.eventType !== EventType.PAID) throw new AppError(400, "Only paid event registrations can be verified");
+  if (registration.paymentVerificationStatus === PaymentVerificationStatus.VERIFIED) {
+    return normalizeRegistrationPaymentState(registration);
+  }
+  if (!registration.stripeCheckoutSessionId) throw new AppError(400, "No Stripe checkout reference was found for this registration");
+  if (!stripeClient) throw new AppError(500, "Stripe is not configured for manual verification");
+
+  const checkoutSession = await stripeClient.checkout.sessions.retrieve(registration.stripeCheckoutSessionId);
+  if (checkoutSession.payment_status !== "paid") {
+    throw new AppError(409, "Stripe has not marked this checkout session as paid yet");
+  }
+
+  const updatedRegistration = await prisma.eventRegistration.update({
+    where: { id: registrationId },
+    data: {
+      paymentStatus: PaymentStatus.PAID,
+      paymentVerificationStatus: PaymentVerificationStatus.VERIFIED,
+      paymentVerifiedAt: new Date(),
+      stripeCheckoutSessionId: checkoutSession.id,
+      paidAmount:
+        typeof checkoutSession.amount_total === "number"
+          ? checkoutSession.amount_total / 100
+          : registration.paidAmount,
+      paidCurrency:
+        checkoutSession.currency?.toUpperCase() ?? registration.paidCurrency ?? registration.event.currency ?? "BDT",
+      status: registration.status === RegistrationStatus.CANCELLED ? RegistrationStatus.REGISTERED : registration.status,
+    },
+    include: {
+      event: true,
+      user: { select: { id: true, name: true, email: true } },
+      member: { include: { user: { select: { id: true, name: true, email: true } } } },
+    },
+  });
+
+  return normalizeRegistrationPaymentState(updatedRegistration);
+};
+
 const cancelRegistration = async (registrationId: string, userId: string, userRole: Role) => {
   const registration = await prisma.eventRegistration.findUnique({ where: { id: registrationId } });
   if (!registration) throw new AppError(404, "Registration not found");
@@ -103,4 +154,4 @@ const cancelRegistration = async (registrationId: string, userId: string, userRo
   return normalizeRegistrationPaymentState(updatedRegistration);
 };
 
-export const registrationService = { getRegistrations, cancelRegistration };
+export const registrationService = { getRegistrations, verifyPendingPayment, cancelRegistration };
