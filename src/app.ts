@@ -26,7 +26,10 @@ const allowedOrigins = new Set(env.CLIENT_URLS);
 app.use(helmet());
 app.use(
   cors({
-    origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
+    origin: (
+      origin: string | undefined,
+      callback: (error: Error | null, allow?: boolean) => void,
+    ) => {
       if (!origin || allowedOrigins.has(origin)) {
         callback(null, true);
         return;
@@ -58,5 +61,4 @@ app.use(notFound);
 app.use(errorHandler);
 
 export default app;
-//v1.1 release - added google auth and payment gateway integration
-// added some packages and scripts for better development experience and code quality
+//v1.1 updated CORS configuration to allow multiple origins and added error handling for disallowed origins.
