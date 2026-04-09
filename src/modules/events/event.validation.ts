@@ -37,5 +37,12 @@ export const eventListQuerySchema = z.object({
   featuredOnly: z.coerce.boolean().optional(),
 });
 
+export const enrollmentEmailSchema = z.object({
+  subject: z.string().trim().min(1, "Subject is required"),
+  message: z.string().trim().min(1, "Message is required"),
+  includeWaitlisted: z.coerce.boolean().optional().default(false),
+  replyTo: z.string().trim().email().optional(),
+});
+
 export const createEventSchema = addPaidEventValidation(eventObjectSchema);
 export const updateEventSchema = addPaidEventValidation(eventObjectSchema.partial());

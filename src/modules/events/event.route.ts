@@ -4,7 +4,12 @@ import authMiddleware from "../../middlewares/auth.middleware";
 import roleMiddleware, { MANAGEMENT_ROLES } from "../../middlewares/role.middleware";
 import validateRequest from "../../middlewares/validateRequest";
 import { eventController } from "./event.controller";
-import { createEventSchema, eventListQuerySchema, updateEventSchema } from "./event.validation";
+import {
+  createEventSchema,
+  enrollmentEmailSchema,
+  eventListQuerySchema,
+  updateEventSchema,
+} from "./event.validation";
 
 const eventRouter = Router();
 
@@ -32,5 +37,12 @@ eventRouter.delete(
 );
 eventRouter.post("/:id/register", authMiddleware, eventController.registerForEvent);
 eventRouter.post("/:id/payment-failed", authMiddleware, eventController.markPaymentVerificationFailed);
+eventRouter.post(
+  "/:id/enrollment-emails",
+  authMiddleware,
+  roleMiddleware(...MANAGEMENT_ROLES),
+  validateRequest(enrollmentEmailSchema),
+  eventController.sendEnrollmentEmails,
+);
 
 export default eventRouter;

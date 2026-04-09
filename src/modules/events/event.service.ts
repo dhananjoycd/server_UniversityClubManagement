@@ -590,6 +590,93 @@ const markPaymentVerificationFailed = async (eventId: string, userId: string) =>
   });
 };
 
+const sendEnrollmentEmails = async (
+  eventId: string,
+  payload: {
+    subject: string;
+    message: string;
+    includeWaitlisted?: boolean;
+    replyTo?: string;
+  },
+) => {
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    select: { id: true, title: true, eventDate: true, location: true },
+  });
+
+  if (!event) throw new AppError(404, "Event not found");
+  if (!isMailConfigured || !mailTransporter) {
+    throw new AppError(503, "Email service is not configured");
+  }
+
+  const allowedStatuses = payload.includeWaitlisted
+    ? [RegistrationStatus.REGISTERED, RegistrationStatus.WAITLISTED]
+    : [RegistrationStatus.REGISTERED];
+
+  const registrations = await prisma.eventRegistration.findMany({
+    where: {
+      eventId,
+      status: { in: allowedStatuses },
+      paymentVerificationStatus: {
+        in: [PAYMENT_VERIFICATION_STATUS.NOT_APPLICABLE, PAYMENT_VERIFICATION_STATUS.VERIFIED],
+      },
+    } as any,
+    select: {
+      snapshotEmail: true,
+      snapshotName: true,
+      user: { select: { email: true, name: true } },
+    },
+  });
+
+  const recipients = [
+    ...new Set(
+      registrations
+        .map((registration) => registration.snapshotEmail || registration.user.email)
+        .map((email) => email?.trim().toLowerCase())
+        .filter(Boolean),
+    ),
+  ];
+
+  if (!recipients.length) {
+    throw new AppError(400, "No enrolled recipients were found for this event");
+  }
+
+  const formattedEventDate = new Intl.DateTimeFormat("en-BD", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(event.eventDate);
+
+  const htmlMessage = payload.message
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .join("<br />");
+
+  await mailTransporter.sendMail({
+    from: env.SMTP_FROM,
+    to: env.SMTP_FROM,
+    bcc: recipients,
+    replyTo: payload.replyTo,
+    subject: payload.subject,
+    text: payload.message,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #0f172a;">
+        <h2 style="margin: 0 0 8px;">${event.title}</h2>
+        <p style="margin: 0 0 12px; font-size: 14px; color: #475569;">
+          ${formattedEventDate} | ${event.location}
+        </p>
+        <div style="white-space: normal;">${htmlMessage}</div>
+      </div>
+    `,
+  });
+
+  return {
+    eventId: event.id,
+    recipientCount: recipients.length,
+    includeWaitlisted: Boolean(payload.includeWaitlisted),
+    subject: payload.subject,
+  };
+};
+
 const completePaidRegistration = async (session: Stripe.Checkout.Session) => {
   const eventId = session.metadata?.eventId;
   const userId = session.metadata?.userId;
@@ -657,5 +744,6 @@ export const eventService = {
   deleteEvent,
   registerForEvent,
   markPaymentVerificationFailed,
+  sendEnrollmentEmails,
   completePaidRegistration,
 };

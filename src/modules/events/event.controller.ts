@@ -61,4 +61,23 @@ const markPaymentVerificationFailed: RequestHandler = catchAsync(async (req, res
   });
 });
 
-export const eventController = { getEvents, getEventById, createEvent, updateEvent, deleteEvent, registerForEvent, markPaymentVerificationFailed };
+const sendEnrollmentEmails: RequestHandler = catchAsync(async (req, res) => {
+  const result = await eventService.sendEnrollmentEmails(getParamId(req.params.id), req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Enrollment emails sent successfully",
+    data: result,
+  });
+});
+
+export const eventController = {
+  getEvents,
+  getEventById,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  registerForEvent,
+  markPaymentVerificationFailed,
+  sendEnrollmentEmails,
+};
